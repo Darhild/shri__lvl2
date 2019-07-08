@@ -1336,10 +1336,43 @@ const string = `{
       }
     ]
   }`; 
+  
+  const string2 = `{
+    "block": "form",
+    "content": [
+        {
+          "block": "form",
+          "elem": "label",
+          "content": 
+            {
+              "block": "text",
+              "mods": 
+              { 
+                "size": "l" 
+              }
+          }
+        },
+        { 
+          "block": "input", 
+          "mods": 
+          { 
+            "size": "l" 
+          } 
+        },
+        { 
+          "block": "input", 
+          "mods": 
+          { 
+            "size": "s" 
+          } 
+        }
+    ]
+}`;
 
   const errors = [];
-  let h1 = false;
-      h2 = false;
+  let h1 = false,
+      h2 = false,
+      reference;
 
   const errorMessages = {
     "TEXT.SEVERAL_H1": "В документе не может быть больше одного заголовка h1",
@@ -1351,9 +1384,39 @@ const string = `{
 
   };
 
+  function findName(obj, names) {
+    let values = Object.values(obj);
+
+    if (values.some(elem => names.includes(elem))) return true;
+    
+    values.forEach(value => {
+      if (typeof value === 'object') {
+        findName(value, names);
+      }
+    })      
+  }
+
+  function validateAll(obj) {
+    if (findName(obj, ['form'])) walk(obj, validateForm);
+  }
+
+  function validateForm(obj) {    
+    if (findName(obj, ['input', 'label', 'button', 'text'])) walk(obj, validateSize); 
+    else return;
+  }
+
+  function validateSize(obj) {
+    if(obj['size'] && reference === undefined) reference = obj['size'];      
+      
+    if (obj['size'] !== undefined && obj['size'] !== reference) {
+          errors.push({ "code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL", "error": "Все инпуты, кнопки и тексты в лейблах в блоке формы должны быть одного размера" })      
+    }
+  }
+
   function validateTitle(prop) {      
 
-        if (prop === 'h1') {
+        if (prop === 'h1') {         
+
             if (h1) {
                 errors.push({ "code": "TEXT.SEVERAL_H1", "error": "В документе не может быть больше одного заголовка h1", "location": `${locate(prop)}` })
             }
@@ -1369,25 +1432,23 @@ const string = `{
             if(!h2) errors.push({ "code": "INVALID_H3_POSITION", "error": "Заголовок h3 следует раньше заголовка h2" })      
         }
   }
-
-  function walk(node) {
-        if (Array.isArray(node)) {
-            node.forEach(obj => walk(obj));
-        }
-
-        else if (typeof node === "object") {            
-            for (const prop in node) {                
-                validateTitle(node[prop]);
-                walk(node[prop]);
-
-            }  
-        }        
+    
+  function walk(node, validate) {
+    let entries = Object.entries(node);
+        
+    entries.forEach((key, value) => {
+      validate(key, value);
+      if (typeof value === 'object') {
+        walk(value, validate);
+      }
+    })
+             
 
   }
 
   function lint(string) {
-      const json = JSON.parse(string);
-      walk(json);
+      const json = JSON.parse(string2);
+      validateAll(json);
       console.log(errors);
       return errors;
   }
