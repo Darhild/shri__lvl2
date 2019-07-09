@@ -1452,6 +1452,8 @@ const string = `{
       type: 'Object',
       children: []
     };
+
+    createAstTree(obj, ast);
     
     function createAstTree(obj, node) {
       for (prop in obj) {
@@ -1464,85 +1466,46 @@ const string = `{
           value: {}
         };
 
-        node.children.push(child);  
+        node.children.push(child); 
 
         if (typeof obj[prop] === 'string') {
           child.value.type = 'Literal';
           child.value.value = `${obj[prop]}`;                
         }
-
+  
         if (typeof obj[prop] === 'object') {
           child.value.children = [];
-          
+
           if (Array.isArray(obj[prop])) {
-            child.value.type = 'Array';      
-            obj[prop].forEach(item => {
-              createAstTree(item, child.value);          
-            })
-          }  
+            child.value.type = 'Array';
+                       
+            obj[prop].forEach(item => {              
+              let astObj = {
+                type: 'Object',
+                children: []
+              }                      
+              createAstTree(item, astObj);
+              child.value.children.push(astObj);
+          }); 
+
+        }
+    
           else {
             child.value.type = 'Object';  
-            for(prop in obj[prop]) {
-              createAstTree(prop, child.value);
-            }
-
-          }          
-        }
+            createAstTree(obj[prop], child.value);
+          }   
+  
+        }    
       }
     }   
-  }
 
-
-
-
-
-  function createAstObject (obj) {
-    const astObj = {
-      type: 'Object',
-      children: []
-    };
-
-    for (prop in obj) {
-      let child = {
-        type: 'Property',
-        key: {
-          type: 'Identifier',
-          value: `${prop}`
-        },
-        value: {}
-      };
-
-      astObj.children.push(child); 
-
-      if (typeof obj[prop] === 'string') {
-        child.value.type = 'Literal';
-        child.value.value = `${obj[prop]}`;                
-      }
-
-      if (Array.isArray(obj[prop])) {
-        child.value.type = 'Array';      
-        obj[prop].forEach(item => {
-          createAstObject(item);          
-        })
-      }  
-
-      else {
-        child.value.type = 'Object';  
-        for(prop in obj[prop]) {
-          createAstObject(prop);
-        }
-
-      }      
-    }
-
-    return astObj;
-
+    return ast;
   }
 
   function lint(string) {
-      const json = JSON.parse(string2);
+      const json = JSON.parse(string3);
       jsonToAst(json);
-      console.log(createAstObject(json));
+      console.log(jsonToAst(json));
       validateInputSizes(json);
       validateContentSpaces(json);
       return errors;
