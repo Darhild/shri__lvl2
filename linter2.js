@@ -1428,7 +1428,6 @@ const string = `{
 
   }
 
-
   /*
   return {
           type: 'Property',
@@ -1447,21 +1446,42 @@ const string = `{
             }
   */
 
+  function locateValue(string, raw, numberOfCalls) {
+    const loc = {
+      start: {},
+      end: {}
+    };
+
+    const reg = new RegExp(`${string}`, 'g');
+    const result = raw.match(reg)[numberOfCalls];
+    const arr = raw.split("\n");
+    console.log(arr);
+    const column = arr[numberOfCalls].indexOf(result) + 1;
+    const length = string.length;
+    console.log(column, string); 
+
+  }
+
   function jsonToAst(obj) {
     const ast = {
       type: 'Object',
       children: []
     };
 
-    createAstTree(obj, ast);
+    let numberOfCalls = 0;
+
+    createAstTree(obj, ast, string2);
     
-    function createAstTree(obj, node) {
+    function createAstTree(obj, node, raw) { 
+      numberOfCalls++;
+
       for (prop in obj) {
-        let child = {
+          let child = {
           type: 'Property',
           key: {
             type: 'Identifier',
-            value: `${prop}`
+            value: `${prop}`,
+            loc: locateValue(prop, raw, numberOfCalls)
           },
           value: {}
         };
@@ -1484,17 +1504,14 @@ const string = `{
                 type: 'Object',
                 children: []
               }                      
-              createAstTree(item, astObj);
+              createAstTree(item, astObj, string);
               child.value.children.push(astObj);
           }); 
-
-        }
-    
+        }    
           else {
             child.value.type = 'Object';  
-            createAstTree(obj[prop], child.value);
-          }   
-  
+            createAstTree(obj[prop], child.value, string);
+          } 
         }    
       }
     }   
@@ -1503,9 +1520,9 @@ const string = `{
   }
 
   function lint(string) {
-      const json = JSON.parse(string3);
+      const json = JSON.parse(string2);
       jsonToAst(json);
-      console.log(jsonToAst(json));
+//      console.log(jsonToAst(json));
       validateInputSizes(json);
       validateContentSpaces(json);
       return errors;
