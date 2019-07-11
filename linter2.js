@@ -1454,13 +1454,17 @@ const string = `{
 
     const reg = new RegExp(`${string}`, 'g');
     const result = raw.match(reg)[numberOfCalls];
-    const arr = raw.split("\n");
-    console.log(arr);
-    const column = arr[numberOfCalls].indexOf(result) + 1;
+    const prevStr =  raw.substring(0, raw.indexOf(result));
+    const line = prevStr.match(/\n/g).length + 1; 
+    console.log(prevStr.match(/\n/g));
+    const column = prevStr.length - prevStr.lastIndexOf("\n");
+    //console.log(prevStr.length, prevStr.lastIndexOf("\n"));
     const length = string.length;
-    console.log(column, string); 
+    console.log(column, line, string); 
 
   }
+
+  locateValue("elem", string2, 0)
 
   function jsonToAst(obj) {
     const ast = {
@@ -1472,8 +1476,7 @@ const string = `{
 
     createAstTree(obj, ast, string2);
     
-    function createAstTree(obj, node, raw) { 
-      numberOfCalls++;
+    function createAstTree(obj, node, raw) {       
 
       for (prop in obj) {
           let child = {
@@ -1481,7 +1484,7 @@ const string = `{
           key: {
             type: 'Identifier',
             value: `${prop}`,
-            loc: locateValue(prop, raw, numberOfCalls)
+          //  loc: locateValue(prop, raw, numberOfCalls)
           },
           value: {}
         };
@@ -1512,7 +1515,8 @@ const string = `{
             child.value.type = 'Object';  
             createAstTree(obj[prop], child.value, string);
           } 
-        }    
+        }  
+        numberOfCalls++;  
       }
     }   
 
