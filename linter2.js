@@ -1472,13 +1472,14 @@ const string = `{
       children: []
     };
 
-    let numberOfCalls = 0;
+    let numberOfObjects = 1;
 
     createAstTree(obj, ast, string2);
     
     function createAstTree(obj, node, raw) {       
 
       for (prop in obj) {
+
           let child = {
           type: 'Property',
           key: {
@@ -1502,7 +1503,8 @@ const string = `{
           if (Array.isArray(obj[prop])) {
             child.value.type = 'Array';
                        
-            obj[prop].forEach(item => {              
+            obj[prop].forEach(item => {
+              numberOfObjects++;
               let astObj = {
                 type: 'Object',
                 children: []
@@ -1512,13 +1514,15 @@ const string = `{
           }); 
         }    
           else {
-            child.value.type = 'Object';  
+            child.value.type = 'Object';
+            numberOfObjects++;
             createAstTree(obj[prop], child.value, string);
           } 
         }  
-        numberOfCalls++;  
       }
-    }   
+    }
+
+    console.log("number: " + numberOfObjects);
 
     return ast;
   }
