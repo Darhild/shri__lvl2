@@ -1446,14 +1446,24 @@ const string = `{
             }
   */
 
-  function locateValue(string, raw, numberOfCalls) {
+  function locateValue(string, raw, numberOfObjects) {
     const loc = {
       start: {},
       end: {}
     };
+    
+    const bracket = /{/g;
+
+    for (let i = 0; i < numberOfObjects; i++) {
+      bracket.exec(raw);
+    }
+
+    const indexofObject = index;   
 
     const reg = new RegExp(`${string}`, 'g');
-    const result = raw.match(reg)[numberOfCalls];
+    reg.lastIndex = indexofObject;
+
+    const result = reg.exec(raw);
     const prevStr =  raw.substring(0, raw.indexOf(result));
     const line = prevStr.match(/\n/g).length + 1; 
     console.log(prevStr.match(/\n/g));
@@ -1464,7 +1474,7 @@ const string = `{
 
   }
 
-  locateValue("elem", string2, 0)
+  locateValue("elem", string2, 2)
 
   function jsonToAst(obj) {
     const ast = {
