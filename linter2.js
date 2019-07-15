@@ -1444,23 +1444,22 @@ const string = `{
               end: {line: ${line}, column: ${column}, offset: ${offset}}
             }
   */
-
+/*
   function locateValue(value, raw, numberOfObjects) {
-    const loc = {
+    let loc = {
       start: {},
       end: {}
     };
 
-    let line, column, prevStr;
+    let prevStr, wholeStr;
     
     const bracket = /{/g,
           backBracket = /}/g,
-          strEnd = /\n/g,
           backBracketIndexes = [];
 
     for (let i = 0; i < numberOfObjects; i++) {
       bracket.exec(raw);
-    }  
+    }
     
     const objStartIndex = bracket.lastIndex;
 
@@ -1472,31 +1471,85 @@ const string = `{
 
     if (typeof value === 'Object') {
       prevStr = raw.substring(0, objStartIndex);
+      wholeStr = raw.substring(0, objEndIndex);
     }
     else {
       const reg = new RegExp(`${value}`, 'g');
       reg.lastIndex = objStartIndex;
       const result = reg.exec(raw);
-      prevStr = raw.substring(0, raw.indexOf(result));
+      const startIndex = raw.indexOf(result);
+      const lastIndex = startIndex + value.length;
+      prevStr = raw.substring(0, startIndex);
+      wholeStr = raw.substring(0, lastIndex);
     }
 
-  
-    
-    
+    let {line: startLine, column: startColumn} = locateLineColumn (raw, prevStr);
+    let {line: endLine, column: endColumn} = locateLineColumn (raw, wholeStr);
 
-    
-    
-    
-    line = prevStr.match(/\n/g).length + 1; 
-    console.log(prevStr.match(/\n/g));
-    column = prevStr.length - prevStr.lastIndexOf("\n");
-    //console.log(prevStr.length, prevStr.lastIndexOf("\n"));
-    const length = string.length;
-    console.log(column, line, string); 
 
+    loc.start.line = startLine;
+    loc.start.column = startColumn;
+    loc.end.line = endLine;
+    loc.end.column = endColumn;
+
+    //console.log(loc);
+    return loc;
+
+    function locateLineColumn (raw, prevStr) {
+      let line = prevStr.match(/\n/g).length + 1;
+      let column = prevStr.length - prevStr.lastIndexOf("\n");
+      return {line: line, column: column};
+    }
+  }
+*/
+
+function locateValue(raw, numberOfObjects) {
+    let loc = {
+      start: {},
+      end: {}
+    };
+
+    const bracket = /{/g,
+          backBracket = /}/g,
+          backBracketIndexes = [];
+
+    for (let i = 0; i < numberOfObjects; i++) {
+      bracket.exec(raw);
+    }
+    
+    const objStartIndex = bracket.lastIndex;
+
+    while (bracket.exec(raw) !== null) {
+      backBracketIndexes.push(backBracket.exec(raw).index);
+    }
+
+//НАЙТИ ПРАВИЛЬНЫЙ OBJINDEX!!!!
+    const objEndIndex = backBracketIndexes[backBracketIndexes.length - numberOfObjects];
+
+    let prevStr = raw.substring(0, objStartIndex - 1);
+    console.log(prevStr);
+    let wholeStr = raw.substring(0, objEndIndex - 1);
+    let {line: startLine, column: startColumn} = locateLineColumn (raw, prevStr);
+    let {line: endLine, column: endColumn} = locateLineColumn (raw, wholeStr);
+
+
+    loc.start.line = startLine;
+    loc.start.column = startColumn;
+    loc.end.line = endLine;
+    loc.end.column = endColumn;
+
+    //console.log(loc);
+    return loc;
+
+    function locateLineColumn (raw, str) {
+      let line = str.match(/\n/g).length + 1;
+      let column = str.length - str.lastIndexOf("\n");
+      return {line: line, column: column};
+    }
   }
 
-  locateValue("elem", string2, 2)
+
+  console.log(locateValue(string2, 3));
 
   function jsonToAst(obj) {
     const ast = {
@@ -1517,7 +1570,7 @@ const string = `{
           key: {
             type: 'Identifier',
             value: `${prop}`,
-          //  loc: locateValue(prop, raw, numberOfObjects)
+ //           loc: locateValue(prop, raw, numberOfObjects)
           },
           value: {}
         };
@@ -1526,7 +1579,7 @@ const string = `{
 
         if (typeof obj[prop] === 'string') {
           child.value.type = 'Literal';
-          child.value.value = `${obj[prop]}`;                
+          child.value.value = `${obj[prop]}`;
         }
   
         if (typeof obj[prop] === 'object') {
@@ -1554,8 +1607,8 @@ const string = `{
       }
     }
 
-    console.log("number: " + numberOfObjects);
-
+ //   console.log("number: " + numberOfObjects);
+ //   console.log (ast);
     return ast;
   }
 
