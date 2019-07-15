@@ -1340,8 +1340,7 @@ const string = `{
   const string2 = `{
     "block": "form",
     "content": [
-        {
-          "block": "form",
+        { "block": "form",
           "elem": "label",
           "content": 
             {
@@ -1446,28 +1445,51 @@ const string = `{
             }
   */
 
-  function locateValue(string, raw, numberOfObjects) {
+  function locateValue(value, raw, numberOfObjects) {
     const loc = {
       start: {},
       end: {}
     };
+
+    let line, column, prevStr;
     
-    const bracket = /{/g;
+    const bracket = /{/g,
+          backBracket = /}/g,
+          strEnd = /\n/g,
+          backBracketIndexes = [];
 
     for (let i = 0; i < numberOfObjects; i++) {
       bracket.exec(raw);
+    }  
+    
+    const objStartIndex = bracket.lastIndex;
+
+    while (bracket.exec(raw) !== null) {
+      backBracketIndexes.push(backBracket.exec(raw).index);
     }
 
-    const indexofObject = index;   
+    const objEndIndex = backBracketIndexes[backBracketIndexes.length - numberOfObjects];
 
-    const reg = new RegExp(`${string}`, 'g');
-    reg.lastIndex = indexofObject;
+    if (typeof value === 'Object') {
+      prevStr = raw.substring(0, objStartIndex);
+    }
+    else {
+      const reg = new RegExp(`${value}`, 'g');
+      reg.lastIndex = objStartIndex;
+      const result = reg.exec(raw);
+      prevStr = raw.substring(0, raw.indexOf(result));
+    }
 
-    const result = reg.exec(raw);
-    const prevStr =  raw.substring(0, raw.indexOf(result));
-    const line = prevStr.match(/\n/g).length + 1; 
+  
+    
+    
+
+    
+    
+    
+    line = prevStr.match(/\n/g).length + 1; 
     console.log(prevStr.match(/\n/g));
-    const column = prevStr.length - prevStr.lastIndexOf("\n");
+    column = prevStr.length - prevStr.lastIndexOf("\n");
     //console.log(prevStr.length, prevStr.lastIndexOf("\n"));
     const length = string.length;
     console.log(column, line, string); 
@@ -1495,7 +1517,7 @@ const string = `{
           key: {
             type: 'Identifier',
             value: `${prop}`,
-          //  loc: locateValue(prop, raw, numberOfCalls)
+          //  loc: locateValue(prop, raw, numberOfObjects)
           },
           value: {}
         };
