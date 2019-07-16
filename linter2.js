@@ -1423,9 +1423,54 @@ const string = `{
     if (size === undefined) errors.push(errorMessages.invalidInputSize);
   }
 
-  function validateContentSpaces (obj) {
+  const validVSpaces = {
+    xxxs: "xs",
+    xxs: "s",
+    xs: "m",
+    s: "l",
+    m: "xl",
+    l: "xxl",
+    xl: "xxxl",
+    xxl: "xxxl",
+    xxxl: "xxxxxl"
+  };
 
+  const validHSpaces = {
+    xxxs: "xxs",
+    xxs: "xs",
+    xs: "s",
+    s: "m",
+    m: "l",
+    l: "xl",
+    xl: "xxl",
+    xxl: "xxxl",
+    xxxl: "xxxxl",
+    xxxxl: "xxxxxl"
   }
+
+
+  function validateContentSpaces (obj, validSpaces) {
+    let hasError = 0;
+
+    obj.children.forEach((item) => {
+      if (item.key.value === "content") {
+        const contents = item.value.children.find(item => item.key.value === "content");
+        const mods = contents.value.children.find(item => item.key.value === "mods");
+        const space = mods.value.children.find(item => item.key.value === "size");
+        const refSize = space.value.value;
+        const mix = item.value.children.find(item => item.key.value === "mix");
+        const mixMods = mix.value.children[0].children.find(item => item.key.value === "mods");
+        const mixSpace = mixMods.value.children.find(item => /^space/.test(item.key.value));
+        const size = mixSpace.value.value;
+
+        if (validSpaces[size] !== size) errors.push(errorMessages.invalidContentSpaceVer);
+      }
+    });
+
+    console.log(errors);
+    return errors;
+  };
+
 
   /*
   return {
@@ -1608,16 +1653,23 @@ function locateValue(raw, numberOfObjects) {
     }
 
  //   console.log("number: " + numberOfObjects);
- //   console.log (ast);
+    console.log (ast);
     return ast;
   }
 
+function walk (tree, validate) {
+  for (let prop in tree) {
+
+  }
+
+}
+
   function lint(string) {
-      const json = JSON.parse(string2);
-      jsonToAst(json);
+      const json = JSON.parse(string3);
+      const ast = jsonToAst(json);
 //      console.log(jsonToAst(json));
       validateInputSizes(json);
-      validateContentSpaces(json);
+      validateContentSpaces(ast);
       return errors;
   }
 
