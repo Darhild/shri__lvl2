@@ -1448,12 +1448,13 @@ const string = `{
     xxxxl: "xxxxxl"
   }
 
-
+/*
   function validateContentSpaces (obj, validSpaces) {
     let hasError = 0;
 
     obj.children.forEach((item) => {
       if (item.key.value === "content") {
+        findElem(item, "size");
         const contents = item.value.children.find(item => item.key.value === "content");
         const mods = contents.value.children.find(item => item.key.value === "mods");
         const space = mods.value.children.find(item => item.key.value === "size");
@@ -1470,6 +1471,48 @@ const string = `{
     console.log(errors);
     return errors;
   };
+
+    function findElem (item, name) {
+      let result = item.value.children.find(item => item.key.value === "name");
+      if (result) return result;
+      else item.value.children.forEach(child => findElem(child, name));
+  }
+
+*/
+
+  function validateContentSpaces (obj, validSpaces) {
+    let hasError = 0;
+
+    obj.children.forEach((item) => {
+      if (item.key.value === "content") {
+        const refSize = findElem(item, "size");
+        const size = findElem(item, "space-v");
+
+        if (validVSpaces[size] !== size) errors.push(errorMessages.invalidContentSpaceVer);
+      }
+    });
+
+    console.log(errors);
+    return errors;
+  };
+
+  function findElem (item, name) {
+    let result = false;
+    findElement (item, name);
+
+    function findElement (item, name) {
+      if (!result && item.key && item.key.value === name) {
+        result = item.value.value;
+      }
+      else if (!result && item.value.type === 'Object'){
+        item.value.children.forEach (child => findElement(child, name));
+      }
+      else if (!result && item.value.type === 'Array') {
+        item.value.children[0].children.forEach (child => findElement(child, name));
+      }
+    }
+    return result;
+  }
 
 
   /*
