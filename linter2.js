@@ -1378,6 +1378,36 @@ const string = `{
     }
 }`;
 
+  const string4 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "content": [
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xl"
+                    }
+                },
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xxxl"
+                    }
+                }
+            ]
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`;
+
   const errors = [];
   let h1 = false,
       h2 = false,
@@ -1423,7 +1453,7 @@ const string = `{
     if (size === undefined) errors.push(errorMessages.invalidInputSize);
   }
 
-  const validVSpaces = {
+  const validSpacesX2 = {
     xxxs: "xs",
     xxs: "s",
     xs: "m",
@@ -1435,7 +1465,7 @@ const string = `{
     xxxl: "xxxxxl"
   };
 
-  const validHSpaces = {
+  const validSpacesX1 = {
     xxxs: "xxs",
     xxs: "xs",
     xs: "s",
@@ -1481,7 +1511,6 @@ const string = `{
 */
 
   function validateContentSpaces (obj, validSpaces) {
-    let hasError = 0;
 
     obj.children.forEach((item) => {
       if (item.key.value === "content") {
@@ -1496,6 +1525,19 @@ const string = `{
     return errors;
   };
 
+  function validateHeader (obj, validSpacesX2) {
+
+    const header = findValue(obj, "header", true);
+    const headerContent = findValue(header, "content", true);
+    const refSize = findValue(obj, "size", true, "input");
+    const size = findValue(header, "size", false, "text");
+
+
+    console.log(headerContent);
+    console.log(refSize, " - refsize" );
+    console.log(size, " - size");
+  }
+/*
   function findElem (item, name) {
     let result = false;
     findElement (item, name);
@@ -1513,7 +1555,57 @@ const string = `{
     }
     return result;
   }
+*/
+  function findValue (item, name, shouldReturnObject, conditionProperty) {
+    let soughtProperty = false,
+        result = false,
+        propArray = [];
 
+    findVal (item, name, shouldReturnObject, conditionProperty);
+
+    function findVal (item, name, shouldReturnObject, conditionProperty) {
+      if (conditionProperty) {
+        findVal(item, conditionProperty, true);
+        let newItem = soughtProperty;
+        soughtProperty = false;
+        result = false;
+        findVal(newItem, name, false);
+      }
+
+      if (!result && item.type === 'Property') {
+        if (item.value.value === name || item.key.value === name) {
+          if (shouldReturnObject) {
+            soughtProperty = item;
+            return;
+          }
+          else {
+            propArray.push(item.value.value);
+            result = true;
+            return;
+          }
+        }
+
+        else if (!result && item.value.children) {
+          item.value.children.forEach (child => findVal(child, name, shouldReturnObject));
+        }
+      }
+
+      else if (!result && item.type === 'Object') {
+        item.children.forEach (child => {
+          findVal(child, name, shouldReturnObject);
+          if (!result && soughtProperty) {
+            soughtProperty = item;
+            result = true;
+          }
+        });
+      }
+
+      else return soughtProperty;
+    }
+
+    if (propArray.length) return propArray;
+    else return soughtProperty;
+  }
 
   /*
   return {
@@ -1708,11 +1800,13 @@ function walk (tree, validate) {
 }
 
   function lint(string) {
-      const json = JSON.parse(string3);
+      const json = JSON.parse(string4);
       const ast = jsonToAst(json);
 //      console.log(jsonToAst(json));
       validateInputSizes(json);
-      validateContentSpaces(ast);
+      validateHeader(ast);
+//      validateContentSpaces(ast);
+//      console.log(findValue(ast, 'size', 'input'));
       return errors;
   }
 
