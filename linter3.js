@@ -275,35 +275,43 @@ function locateValue(raw, numberOfObjects) {
     };
 
     const bracket = /{/g,
-          backBracket = /}/g,
-          backBracketIndexes = [];
+          backBracket = /}/g;
 
     for (let i = 0; i < numberOfObjects; i++) {
       bracket.exec(raw);
     }
     
-    let objStartIndex = bracket.lastIndex, objEndIndex;
+    let objStartIndex = bracket.lastIndex;
     backBracket.lastIndex = bracket.lastIndex;
-    let bracketsNumber = 0, backBracketsNumber = 0;
 
-    while (bracket.exec(raw) !== null) {
-      bracketsNumber++;
+    while (bracket.exec(raw) !== null) {      
       backBracket.exec(raw);
-      backBracketsNumber++;
-      if (bracketsNumber === backBracketsNumber) {
-        objEndIndex = backBracket.lastIndex;
-        break;
+      let substr = raw.substring(bracket.lastIndex, backBracket.lastIndex);
+      if (bracket.test(substr)) {
+        while (bracket.exec(substr) !== null) {
+          backBracket.exec(raw);
+        }
       }
+      else break;   
     }
 
-    let prevStr = raw.substring(0, objStartIndex - 1);
-    let wholeStr = raw.substring(0, objEndIndex - 1);
-    let {line: startLine, column: startColumn} = locateLineColumn (raw, prevStr);
+    let objEndIndex = backBracket.lastIndex;
+
+    if (objStartIndex > 1) {
+      prevStr = raw.substring(0, objStartIndex - 1);
+      let {line: startLine, column: startColumn} = locateLineColumn (raw, prevStr);
+      loc.start.line = startLine;
+      loc.start.column = startColumn;
+    }
+    else {
+      loc.start.line = 0;
+      loc.start.column = 0;
+      
+    }
+
+    let wholeStr = raw.substring(0, objEndIndex - 1);    
     let {line: endLine, column: endColumn} = locateLineColumn (raw, wholeStr);
-
-
-    loc.start.line = startLine;
-    loc.start.column = startColumn;
+    
     loc.end.line = endLine;
     loc.end.column = endColumn + 1;
 
@@ -326,6 +334,7 @@ function locateValue(raw, numberOfObjects) {
     };
 
     let numberOfObjects = 1;
+    let locate;
 
     createAstTree(obj, ast, raw);
     
@@ -342,7 +351,7 @@ function locateValue(raw, numberOfObjects) {
           value: {}
         };
 
-        let locate = locateValue(raw, numberOfObjects);
+        locate = locateValue(raw, numberOfObjects);
         console.log(locate);
 
         node.children.push(child); 
