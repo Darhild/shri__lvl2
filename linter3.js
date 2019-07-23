@@ -130,6 +130,7 @@
 
   const json = JSON.parse(string4);
   const ast = jsonToAst(json, string4);
+  console.log(ast);
 
   function lint(string) {
       
@@ -283,18 +284,7 @@ function locateValue(raw, numberOfObjects) {
     
     let objStartIndex = bracket.lastIndex;
     backBracket.lastIndex = bracket.lastIndex;
-
-    while (bracket.exec(raw) !== null) {      
-      backBracket.exec(raw);
-      let substr = raw.substring(bracket.lastIndex, backBracket.lastIndex);
-      if (bracket.test(substr)) {
-        while (bracket.exec(substr) !== null) {
-          backBracket.exec(raw);
-        }
-      }
-      else break;   
-    }
-
+    findEndIndex();
     let objEndIndex = backBracket.lastIndex;
 
     if (objStartIndex > 1) {
@@ -304,9 +294,8 @@ function locateValue(raw, numberOfObjects) {
       loc.start.column = startColumn;
     }
     else {
-      loc.start.line = 0;
-      loc.start.column = 0;
-      
+      loc.start.line = 1;
+      loc.start.column = 1;
     }
 
     let wholeStr = raw.substring(0, objEndIndex - 1);    
@@ -317,6 +306,21 @@ function locateValue(raw, numberOfObjects) {
 
     return loc;
 
+    function findEndIndex(startIndex = backBracket.lastIndex) {
+      if (arguments.length === 0) backBracket.exec(raw);
+      let substr = raw.substring(startIndex, backBracket.lastIndex - 1);
+      if (substr.search(bracket) !== -1) {
+        let length = substr.match(bracket).length;
+        let prevIndex = backBracket.lastIndex;
+        for (let i = 0; i < length - 1; i++) {
+          backBracket.exec(raw);
+          findEndIndex(prevIndex);
+        }
+        findEndIndex();
+      }
+      else return;
+    }
+
     function locateLineColumn (raw, str) {
       let line = str.match(/\n/g).length + 1;
       let column = str.length - str.lastIndexOf("\n");
@@ -324,17 +328,14 @@ function locateValue(raw, numberOfObjects) {
     }
   }
 
-
-  console.log(locateValue(string4, 6));
-
   function jsonToAst(obj, raw) {
+    let numberOfObjects = 1;
+
     const ast = {
       type: 'Object',
-      children: []
+      children: [],
+      locate: locateValue(raw, numberOfObjects)
     };
-
-    let numberOfObjects = 1;
-    let locate;
 
     createAstTree(obj, ast, raw);
     
@@ -350,9 +351,6 @@ function locateValue(raw, numberOfObjects) {
           },
           value: {}
         };
-
-        locate = locateValue(raw, numberOfObjects);
-        console.log(locate);
 
         node.children.push(child); 
 
@@ -371,7 +369,8 @@ function locateValue(raw, numberOfObjects) {
               numberOfObjects++;
               let astObj = {
                 type: 'Object',
-                children: []
+                children: [],
+                locate: locateValue(raw, numberOfObjects)
               }
               createAstTree(item, astObj, raw);
               child.value.children.push(astObj);
@@ -380,6 +379,7 @@ function locateValue(raw, numberOfObjects) {
           else {
             child.value.type = 'Object';
             numberOfObjects++;
+            child.locate = locateValue(raw, numberOfObjects);
             createAstTree(obj[prop], child.value, raw);
           } 
         }  
