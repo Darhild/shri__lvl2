@@ -8,7 +8,7 @@
               "block": "text",
               "mods": 
               { 
-                "size": "l" 
+                "size": "m" 
               }
           }
         },
@@ -83,6 +83,7 @@
 
 
   const errors = [];
+
   let h1 = false,
       h2 = false,
       reference;
@@ -128,8 +129,8 @@
   const inputSizes = [],
         contentSpaces = [];
 
-  const json = JSON.parse(string4);
-  const ast = jsonToAst(json, string4);
+  const json = JSON.parse(string2);
+  const ast = jsonToAst(json, string2);
   console.log(ast);
 
   function lint(string) {
@@ -146,98 +147,63 @@
 
 
 
-  function getEntries (obj, arr) {
-    const entries = Object.entries(obj);
-    entries.forEach(entry => {
-        if (typeof entry[1] === 'string') arr.push(entry);
-        if (typeof entry[1] === 'object') getEntries(entry[1], arr);
-    });   
-    }   
-
-  function getProperty (obj, prop) {
-
-  } 
-
   function validateInputSizes (obj) {
-    getEntries(obj, inputSizes);
+    const refSize = findSize(obj, ["input", "text", "label"], true);
+    console.log(refSize);
 
-    let reference,
-        size;
-    inputSizes.forEach(entry => {
-        if (entry[0] === 'size') {
-            size = true;
-            if (reference === undefined) reference = entry[1];
-            else if (entry[1] !== reference) errors.push(errorMessages.invalidInputSize); 
-        }
-    })
-
-    if (size === undefined) errors.push(errorMessages.invalidInputSize);
+    const sizes = [];
+    sizes.push(...findAllMods(obj, ["input", "text", "label"], true))
+    compareSizes(refSize, sizes, errorMessages.invalidInputSize);
   }
 
-  function validateContentSpaces (obj, validSpaces) {
+  validateInputSizes(ast);
 
-    obj.children.forEach((item) => {
-      if (item.key.value === "content") {
-        const refSize = findElem(item, "size");
-        const size = findElem(item, "space-v");
+  function validateContentSpaces (obj) {
 
-        if (validVSpaces[size] !== size) errors.push(errorMessages.invalidContentSpaceVer);
-      }
-    });
 
-    console.log(errors);
-    return errors;
   };
 
-  function validateHeader (obj, validArr) {
+  function validateHeader (obj) {
 
-    const refSize = findModsSize(obj, "input");
-    const header = findObject(obj, "header", true, true);
-    const sizes = findAllModsSizes(header, "text");
-
-    console.log(refSize, " - refsize" );
-    console.log(sizes);
-
-    const errorSizes = sizes.filter(size => {
-      return size !== validArr[refSize];
-    })
-
-    if (errorSizes) errors.push(errorMessages.invalidHeaderSpaceVer);
- 
-    console.log(errors);
-
-
+    const refSize = findSize(obj, "input", true);
+    const header = findObject(obj, "header", true);
+    const sizes = findAllMods(header, "text", true);
+    compareSizes(refSize, sizes, errorMessages.invalidHeaderSize, validSpacesX2);   
   }
 
-  validateHeader(ast, validSpacesX2);
+  //validateHeader(ast);
 
-  function findObject (item, name, shouldReturnObject, shouldReturnParent) {
+  function findObject (item, name, shouldReturnParent) {
     let result = false,
     soughtObject = false;
 
-    findObj (item, name, shouldReturnObject, shouldReturnParent);
+    findObj (item, name, shouldReturnParent);
 
-    function findObj (item, name, shouldReturnObject, shouldReturnParent) {
+    function findObj (item, name, shouldReturnParent) {
 
       if (!result && item.type === 'Property') {
-        if (item.value.value === name || item.key.value === name) {
-          if (shouldReturnObject) soughtObject = item;
-          else soughtObject = item.value.value;
+        let namesResult;
+        if (Array.isArray(name)) {
+          namesResult = name.map(str => findProperty(item, str));
+        }
+        else namesResult = findProperty(item, name);
+
+        if (namesResult) {
+          soughtObject = item;
           return;
         }
-
         else if (!result && item.value.children) {
-          item.value.children.forEach (child => findObj(child, name, shouldReturnObject, shouldReturnParent));
-        }
+          item.value.children.forEach (child => findObj(child, name, shouldReturnParent));
+        }        
       }
 
       else if (!result && item.type === 'Object') {
         item.children.forEach (child => {
-          findObj(child, name, shouldReturnObject, shouldReturnParent);
-          if (!result && soughtObject && shouldReturnParent) {
-            soughtObject = item;
+          findObj(child, name, shouldReturnParent);
+          if (!result && soughtObject) {
+            if (shouldReturnParent) soughtObject = item;
             result = true;
-            return;
+            return;            
           }
         });
       }
@@ -248,28 +214,52 @@
     return soughtObject;
   }
 
-  function findAllModsSizes (item, name) {
+  function findProperty(item, name) {
+    return (item.value.value === name || item.key.value === name);
+  }
+
+  function findAllMods (item, name) {
     const arr = [];
-    const obj = findObject(item, "content", true, false);
-    console.log(obj);
+    const obj = findObject(item, "content", false); 
     obj.value.children.forEach(child => {
-      const mods = findObject(child, "mods", true, false);
-      const size = findObject(mods, "size", false, false);
-      arr.push(size);
+      const mods = findObject(child, "mods", false);
+      arr.push(mods);
     })
 
     return arr;
   }
 
-  function findModsSize(item, name) {
-    const obj = findObject(item, name, true, true);
-    const mods = findObject(obj, "mods", true, false);
-    const size = findObject(mods, "size", false, false);
+  function findSize(item, name) {
+    const obj = findObject(item, name, true);
+    const mod = findObject(obj, "mods", false);
+    const size = mod.value.children[0].value.value;
 
     return size;
   } 
 
-function locateValue(raw, numberOfObjects) {
+  function compareSizes(refSize, sizes, error, validArr) {
+    const errorSizes = sizes.filter(size => {
+      if (validArr) return size.value.children[0].value.value !== validArr[refSize];
+      else return size.value.children[0].value.value !== refSize;
+    })
+
+    // console.log(errorSizes);
+
+    if (errorSizes) {
+      const errorsFull = errorSizes.map(item => { 
+        let locate = { location: item.locate };
+        return {
+          ...error,
+          ...locate      
+          }
+      })
+      errors.push(...errorsFull);      
+    }
+
+    console.log(errors);
+  }
+
+  function locateValue(raw, numberOfObjects) {
     let loc = {
       start: {},
       end: {}
@@ -289,7 +279,7 @@ function locateValue(raw, numberOfObjects) {
 
     if (objStartIndex > 1) {
       prevStr = raw.substring(0, objStartIndex - 1);
-      let {line: startLine, column: startColumn} = locateLineColumn (raw, prevStr);
+      let {column: startColumn, line: startLine} = locateLineColumn (raw, prevStr);
       loc.start.line = startLine;
       loc.start.column = startColumn;
     }
@@ -299,7 +289,7 @@ function locateValue(raw, numberOfObjects) {
     }
 
     let wholeStr = raw.substring(0, objEndIndex - 1);    
-    let {line: endLine, column: endColumn} = locateLineColumn (raw, wholeStr);
+    let {column: endColumn, line: endLine} = locateLineColumn (raw, wholeStr);
     
     loc.end.line = endLine;
     loc.end.column = endColumn + 1;
@@ -324,7 +314,7 @@ function locateValue(raw, numberOfObjects) {
     function locateLineColumn (raw, str) {
       let line = str.match(/\n/g).length + 1;
       let column = str.length - str.lastIndexOf("\n");
-      return {line: line, column: column};
+      return {column: column, line: line};
     }
   }
 
@@ -387,14 +377,7 @@ function locateValue(raw, numberOfObjects) {
     }
 
  //   console.log("number: " + numberOfObjects);
-    console.log (ast);
     return ast;
   }
 
-function walk (tree, validate) {
-  for (let prop in tree) {
-
-  }
-
-}
 
