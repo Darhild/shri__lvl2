@@ -35,7 +35,7 @@
         "block": "form",
         "elem": "content",
         "content": { "block": "input", "mods": { "size": "l" } },
-        "mix": [{ "block": "form", "elem": "item", "mods": {  "space-v": "xl" } }]
+        "mix": [{ "block": "form", "elem": "item", "mods": {  "space-v": "xl", "space-h": "xxl"}}]
     }
 }`;
 
@@ -81,6 +81,32 @@
     ]
 }`;
 
+const string5 = `{
+    "block": "form",
+    "content": {
+        "block": "form",
+        "elem": "content",
+        "content": [
+            {
+                "block": "form",
+                "mix": [{ "block": "form", "elem": "item", "mods": { "indent-b": "xl" } }],
+                "content": { "block": "input", "mods": { "size": "l" } }
+            },
+            {
+                "block": "form",
+                "elem":  "content-item",
+                "mix": [{ "block": "form", "elem": "item", "mods": { "indent-b": "l" } }],
+                "content": { "block": "input", "mods": { "size": "l" } }
+            },
+            {
+                "block": "form",
+                "elem":  "content-item",
+                "content": { "block": "input", "mods": { "size": "l" } }
+            }
+        ]
+    }
+}`;
+
 
   const errors = [];
 
@@ -120,7 +146,7 @@
     invalidInputSize: {"code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL", "error": "Подписи и поля в форме должны быть одного размера"},
     invalidContentSpaceVer: {"code": "FORM.CONTENT_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ контентного элемента должен быть на 2 шага больше эталонного размера"},
     invalidContentSpaceHor: {"code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ контентного элемента должен быть на 1 шаг больше эталонного размера"},
-    invalidContentItemIndent: {"code": "FORM.CONTENT_ITEM_INDENT_IS_INVALID", "error": "Строки формы помечаются элементом формы content-item и должны отбиваться между собой с помощью модификатора нижнего отступа со значением модификатора indent-b элемента формы item на 1 шаг больше эталонного размера"},
+    invalidContentItem: {"code": "FORM.CONTENT_ITEM_INDENT_IS_INVALID", "error": "Строки формы помечаются элементом формы content-item и должны отбиваться между собой с помощью модификатора нижнего отступа со значением модификатора indent-b элемента формы item на 1 шаг больше эталонного размера"},
     invalidHeaderSize: {"code": "FORM.HEADER_TEXT_SIZE_IS_INVALID", "error": "Все текстовые блоки в заголовке формы должны быть со значением модификатора size на 2 шага больше эталонного размера"},
     invalidHeaderSpaceVer: {"code": "FORM.HEADER_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ заголовка формы должен быть задан с помощью микса на него элемента формы item со значением модификатора space-v, равным эталонному размеру"}
   }
@@ -129,9 +155,9 @@
   const inputSizes = [],
         contentSpaces = [];
 
-  const json = JSON.parse(string2);
-  const ast = jsonToAst(json, string2);
-  console.log(ast);
+  const json = JSON.parse(string5);
+//  const ast = jsonToAst(json, string5);
+// console.log(ast);
 
   function lint(string) {
       
@@ -149,61 +175,84 @@
 
   function validateInputSizes (obj) {
     const refSize = findSize(obj, ["input", "text", "label"], true);
-    console.log(refSize);
-
     const sizes = [];
     sizes.push(...findAllMods(obj, ["input", "text", "label"], true))
     compareSizes(refSize, sizes, errorMessages.invalidInputSize);
   }
 
-  validateInputSizes(ast);
+//  validateInputSizes(ast);
 
-  function validateContentSpaces (obj) {
-
-
+  function validateContentSpaces(obj) {
+    const refSize = findSize(obj, "content", true);
+    const mix = findObject(obj, "mix", false);
+    if (!mix) {
+      pushError(obj, errorMessages.invalidContentSpaceVer);
+      pushError(obj, errorMessages.invalidContentSpaceHor);
+    }
+    const size = findAllMods(mix);
+    compareSizes(refSize, size, "space-v", errorMessages.invalidContentSpaceVer, validSpacesX2);
+    compareSizes(refSize, size, "space-h", errorMessages.invalidContentSpaceHor, validSpacesX1);
   };
 
-  function validateHeader (obj) {
+//  validateContentSpaces(ast);
+
+  function validateHeader(obj) {
 
     const refSize = findSize(obj, "input", true);
     const header = findObject(obj, "header", true);
-    const sizes = findAllMods(header, "text", true);
-    compareSizes(refSize, sizes, errorMessages.invalidHeaderSize, validSpacesX2);   
+    const content = findObject(header, "content", false);
+    const sizes = findAllMods(content);
+    compareSizes(refSize, sizes, "size", errorMessages.invalidHeaderSize, validSpacesX2);
   }
 
-  //validateHeader(ast);
+//  validateHeader(ast);
 
-  function findObject (item, name, shouldReturnParent) {
+  function validateContentItem(obj) {
+    const content = findObject(obj, "content", false, true);
+    console.log(content);
+
+/*
+    content.value.children.forEach(child => {
+      if((!child[elem]) || (child[elem] !== "content-item")) pushError(child, errorMessages.invalidContentItem);
+    })*/
+
+    console.log(errors);
+
+  }
+
+//  validateContentItem(ast);
+
+  function findObject (item, name, shouldReturnParent, shouldDefineKey = false) {
     let result = false,
     soughtObject = false;
 
-    findObj (item, name, shouldReturnParent);
+    findObj (item, name, shouldReturnParent, shouldDefineKey);
 
-    function findObj (item, name, shouldReturnParent) {
+    function findObj (item, name, shouldReturnParent, shouldDefineKey) {
 
       if (!result && item.type === 'Property') {
         let namesResult;
         if (Array.isArray(name)) {
-          namesResult = name.map(str => findProperty(item, str));
+          namesResult = name.map(str => findProperty(item, str, shouldDefineKey));
         }
-        else namesResult = findProperty(item, name);
+        else namesResult = findProperty(item, name, shouldDefineKey);
 
         if (namesResult) {
           soughtObject = item;
           return;
         }
         else if (!result && item.value.children) {
-          item.value.children.forEach (child => findObj(child, name, shouldReturnParent));
-        }        
+          item.value.children.forEach (child => findObj(child, name, shouldReturnParent, shouldDefineKey));
+        }
       }
 
       else if (!result && item.type === 'Object') {
         item.children.forEach (child => {
-          findObj(child, name, shouldReturnParent);
+          findObj(child, name, shouldReturnParent, shouldDefineKey);
           if (!result && soughtObject) {
             if (shouldReturnParent) soughtObject = item;
             result = true;
-            return;            
+            return;
           }
         });
       }
@@ -214,13 +263,13 @@
     return soughtObject;
   }
 
-  function findProperty(item, name) {
-    return (item.value.value === name || item.key.value === name);
+  function findProperty(item, name, shouldDefineKey) {
+    if (shouldDefineKey) return item.key.value === name;
+    else return item.value.value === name;
   }
 
-  function findAllMods (item, name) {
+  function findAllMods(obj) {
     const arr = [];
-    const obj = findObject(item, "content", false); 
     obj.value.children.forEach(child => {
       const mods = findObject(child, "mods", false);
       arr.push(mods);
@@ -237,26 +286,36 @@
     return size;
   } 
 
-  function compareSizes(refSize, sizes, error, validArr) {
-    const errorSizes = sizes.filter(size => {
-      if (validArr) return size.value.children[0].value.value !== validArr[refSize];
-      else return size.value.children[0].value.value !== refSize;
-    })
-
-    // console.log(errorSizes);
+  function compareSizes(refSize, sizes, name, error, validArr) {
+    const errorSizes = [];
+    sizes.forEach(size => {
+      let errorSize = size.value.children.filter(child => {
+        if (child.key.value === name) {
+          if (validArr) return child.value.value !== validArr[refSize];
+          else return child.value.value !== refSize;
+        }
+      });
+      if(errorSize.length) errorSizes.push(size);
+    });
 
     if (errorSizes) {
       const errorsFull = errorSizes.map(item => { 
         let locate = { location: item.locate };
         return {
           ...error,
-          ...locate      
+          ...locate
           }
-      })
-      errors.push(...errorsFull);      
+      });
+      errors.push(...errorsFull);
     }
+  }
 
-    console.log(errors);
+  function pushError(item, error) {
+    let locate = { location: item.locate };
+    errors.push({
+          ...error,
+          ...locate
+          });
   }
 
   function locateValue(raw, numberOfObjects) {
@@ -276,6 +335,7 @@
     backBracket.lastIndex = bracket.lastIndex;
     findEndIndex();
     let objEndIndex = backBracket.lastIndex;
+    console.log(objEndIndex);
 
     if (objStartIndex > 1) {
       prevStr = raw.substring(0, objStartIndex - 1);
@@ -296,27 +356,37 @@
 
     return loc;
 
-    function findEndIndex(startIndex = backBracket.lastIndex) {
-      if (arguments.length === 0) backBracket.exec(raw);
-      let substr = raw.substring(startIndex, backBracket.lastIndex - 1);
-      if (substr.search(bracket) !== -1) {
-        let length = substr.match(bracket).length;
-        let prevIndex = backBracket.lastIndex;
-        for (let i = 0; i < length - 1; i++) {
-          backBracket.exec(raw);
-          findEndIndex(prevIndex);
+    function findEndIndex() {
+      let result = false;
+      findIndex();
+
+      function findIndex(startIndex = backBracket.lastIndex) {
+        if (arguments.length === 0) backBracket.exec(raw);
+        let substr = raw.substring(startIndex, backBracket.lastIndex - 1);
+        if (substr.search(bracket) !== -1) {
+          let length = substr.match(bracket).length;
+          let prevIndex = backBracket.lastIndex;
+          for (let i = 0; i < length - 1; i++) {
+            backBracket.exec(raw);
+            findIndex(prevIndex);
+          }
+          findIndex();
         }
-        findEndIndex();
+        else {
+          result = true;
+          return;
+        }
       }
-      else return;
     }
 
-    function locateLineColumn (raw, str) {
+    function locateLineColumn(raw, str) {
       let line = str.match(/\n/g).length + 1;
       let column = str.length - str.lastIndexOf("\n");
       return {column: column, line: line};
     }
   }
+
+  console.log(locateValue(string5, 1));
 
   function jsonToAst(obj, raw) {
     let numberOfObjects = 1;
