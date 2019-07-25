@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Linter</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.2.0/mocha.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/6.2.0/mocha.js"></script>
+  <script>
+    mocha.setup('bdd');
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.2.0/chai.js"></script>
+  <script>
+    var assert = chai.assert;
+  </script>
+</head>
+<body>
+
+<script>
+  function linter(string) {
+    const json = JSON.parse(string);
+    const ast = jsonToAst(json, string);
+    return validateHeaders(ast);
+
+    function jsonToAst(obj, raw) {
+      let numberOfObjects = 1;
+
+      const ast = {
+        type: 'Object',
+        children: [],
+        locate: locateValue(raw, numberOfObjects)
+      };
+
+      createAstTree(obj, ast, raw);
+      
+      function createAstTree(obj, node, raw) {
+
+        for (prop in obj) {
+
+            let child = {
+            type: 'Property',
+            key: {
+              type: 'Identifier',
+              value: `${prop}`
+            },
+            value: {}
+          };
+
+          node.children.push(child); 
+
+          if (typeof obj[prop] === 'string') {
+            child.value.type = 'Literal';
+            child.value.value = `${obj[prop]}`;
+          }
+    
+          if (typeof obj[prop] === 'object') {
+            child.value.children = [];
+
+            if (Array.isArray(obj[prop])) {
+              child.value.type = 'Array';
+                         
+              obj[prop].forEach(item => {
+                numberOfObjects++;
+                let astObj = {
+                  type: 'Object',
+                  children: [],
+                  locate: locateValue(raw, numberOfObjects)
+                }
+                createAstTree(item, astObj, raw);
+                child.value.children.push(astObj);
+            }); 
+          }    
+            else {
+              child.value.type = 'Object';
+              numberOfObjects++;
+              child.locate = locateValue(raw, numberOfObjects);
+              createAstTree(obj[prop], child.value, raw);
+            } 
+          }  
+        }
+      }
+      return ast;
+    }
+    function locateValue(raw, numberOfObjects) {
+      let loc = {
+        start: {},
+        end: {}
+      };
+
+      const bracket = /{/g,
+            backBracket = /}/g;
+
+      for (let i = 0; i < numberOfObjects; i++) {
+        bracket.exec(raw);
+      }
+      
+      let objStartIndex = bracket.lastIndex;
+      backBracket.lastIndex = bracket.lastIndex;
+      findEndIndex();
+      let objEndIndex = backBracket.lastIndex;
+      // console.log(objEndIndex);
+
+      if (objStartIndex > 1) {
+        prevStr = raw.substring(0, objStartIndex - 1);
+        let {column: startColumn, line: startLine} = locateLineColumn (raw, prevStr);
+        loc.start.line = startLine;
+        loc.start.column = startColumn;
+      }
+      else {
+        loc.start.line = 1;
+        loc.start.column = 1;
+      }
+
+      let wholeStr = raw.substring(0, objEndIndex - 1);    
+      let {column: endColumn, line: endLine} = locateLineColumn (raw, wholeStr);
+      
+      loc.end.line = endLine;
+      loc.end.column = endColumn + 1;
+
+      return loc;
+
+      function findEndIndex(startIndex = backBracket.lastIndex) {
+        if (arguments.length === 0) backBracket.exec(raw);
+        let substr = raw.substring(startIndex, backBracket.lastIndex - 1);
+        if (substr.search(bracket) !== -1) {
+          let length = substr.match(bracket).length;
+          let prevIndex = backBracket.lastIndex;
+          for (let i = 0; i < length - 1; i++) {
+            backBracket.exec(raw);            
+          }
+          findEndIndex(prevIndex);
+          findEndIndex();
+        }
+        else return;
+      }    
+
+      function locateLineColumn(raw, str) {
+        let line = str.match(/\n/g).length + 1;
+        let column = str.length - str.lastIndexOf("\n");
+        return {column: column, line: line};
+      }
+    }
+    function findObject (item, name, shouldReturnParent, shouldDefineKey = false) {
+      let result = false,
+      soughtObject = false;
+
+      findObj (item, name, shouldReturnParent, shouldDefineKey);
+
+      function findObj (item, name, shouldReturnParent, shouldDefineKey) {
+
+        if (!result && item.type === 'Property') {
+          if (typeof name === "string") {
+            let arr = [];
+            arr.push(name);
+            name = arr;
+          }
+          let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));  
+
+          if (namesResult.length) {
+            soughtObject = item;
+            return;
+          }
+
+          else if (!result && item.value.children) {
+            item.value.children.forEach (child => {
+              findObj(child, name, shouldReturnParent, shouldDefineKey);
+              if (!result && soughtObject) {
+                if (shouldReturnParent) soughtObject = item;
+                result = true;
+                return;
+              }
+            })
+          }
+        }
+
+        else if (!result && item.type === 'Object') {
+          item.children.forEach (child => {
+            findObj(child, name, shouldReturnParent, shouldDefineKey);
+            if (!result && soughtObject) {
+              if (shouldReturnParent) soughtObject = item;
+              result = true;
+              return;
+            }
+          });
+        }
+
+        else return soughtObject;
+      }
+      
+      return soughtObject;
+    }
+
+    function validateHeaders(obj) {
+      return true;
+
+    }
+
+  }
+</script>
+
+  <!-- в этом скрипте находятся спеки -->
+  <script>
+    const form1 = `{
+        "block": "text",
+        "mods": { "type": "h1" }
+    }`;
+
+    const form2 = `{
+    "block": "form",
+    "content": [
+      {
+          "block": "text",
+          "mods": { "type": "h1" }
+      },
+
+      {
+          "block": "text",
+          "mods": { "type": "h1" }
+      }
+    ]
+  }`;
+
+
+    describe("Проверяет, что на странице есть только один h1", function() {
+
+      it("правильный случай", function() {
+        assert.equal(linter(form1, true));
+      });
+
+      it("неправильный случай", function() {
+        assert.equal(linter(form2, false));
+      });
+
+    });
+    
+
+  </script>
+
+  <!-- в элементе с id="mocha" будут результаты тестов -->
+  <div id="mocha"></div>
+
+
+  <script>
+    mocha.run();
+  </script>
+
+</body>
+</html>
