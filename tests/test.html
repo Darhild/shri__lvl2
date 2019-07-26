@@ -15,186 +15,8 @@
 </head>
 <body>
 
-<script>
-  function linter(string) {
-    const json = JSON.parse(string);
-    const ast = jsonToAst(json, string);
-    return validateHeaders(ast);
-
-    function jsonToAst(obj, raw) {
-      let numberOfObjects = 1;
-
-      const ast = {
-        type: 'Object',
-        children: [],
-        locate: locateValue(raw, numberOfObjects)
-      };
-
-      createAstTree(obj, ast, raw);
-      
-      function createAstTree(obj, node, raw) {
-
-        for (prop in obj) {
-
-            let child = {
-            type: 'Property',
-            key: {
-              type: 'Identifier',
-              value: `${prop}`
-            },
-            value: {}
-          };
-
-          node.children.push(child); 
-
-          if (typeof obj[prop] === 'string') {
-            child.value.type = 'Literal';
-            child.value.value = `${obj[prop]}`;
-          }
-    
-          if (typeof obj[prop] === 'object') {
-            child.value.children = [];
-
-            if (Array.isArray(obj[prop])) {
-              child.value.type = 'Array';
-                         
-              obj[prop].forEach(item => {
-                numberOfObjects++;
-                let astObj = {
-                  type: 'Object',
-                  children: [],
-                  locate: locateValue(raw, numberOfObjects)
-                }
-                createAstTree(item, astObj, raw);
-                child.value.children.push(astObj);
-            }); 
-          }    
-            else {
-              child.value.type = 'Object';
-              numberOfObjects++;
-              child.locate = locateValue(raw, numberOfObjects);
-              createAstTree(obj[prop], child.value, raw);
-            } 
-          }  
-        }
-      }
-      return ast;
-    }
-    function locateValue(raw, numberOfObjects) {
-      let loc = {
-        start: {},
-        end: {}
-      };
-
-      const bracket = /{/g,
-            backBracket = /}/g;
-
-      for (let i = 0; i < numberOfObjects; i++) {
-        bracket.exec(raw);
-      }
-      
-      let objStartIndex = bracket.lastIndex;
-      backBracket.lastIndex = bracket.lastIndex;
-      findEndIndex();
-      let objEndIndex = backBracket.lastIndex;
-      // console.log(objEndIndex);
-
-      if (objStartIndex > 1) {
-        prevStr = raw.substring(0, objStartIndex - 1);
-        let {column: startColumn, line: startLine} = locateLineColumn (raw, prevStr);
-        loc.start.line = startLine;
-        loc.start.column = startColumn;
-      }
-      else {
-        loc.start.line = 1;
-        loc.start.column = 1;
-      }
-
-      let wholeStr = raw.substring(0, objEndIndex - 1);    
-      let {column: endColumn, line: endLine} = locateLineColumn (raw, wholeStr);
-      
-      loc.end.line = endLine;
-      loc.end.column = endColumn + 1;
-
-      return loc;
-
-      function findEndIndex(startIndex = backBracket.lastIndex) {
-        if (arguments.length === 0) backBracket.exec(raw);
-        let substr = raw.substring(startIndex, backBracket.lastIndex - 1);
-        if (substr.search(bracket) !== -1) {
-          let length = substr.match(bracket).length;
-          let prevIndex = backBracket.lastIndex;
-          for (let i = 0; i < length - 1; i++) {
-            backBracket.exec(raw);            
-          }
-          findEndIndex(prevIndex);
-          findEndIndex();
-        }
-        else return;
-      }    
-
-      function locateLineColumn(raw, str) {
-        let line = str.match(/\n/g).length + 1;
-        let column = str.length - str.lastIndexOf("\n");
-        return {column: column, line: line};
-      }
-    }
-    function findObject (item, name, shouldReturnParent, shouldDefineKey = false) {
-      let result = false,
-      soughtObject = false;
-
-      findObj (item, name, shouldReturnParent, shouldDefineKey);
-
-      function findObj (item, name, shouldReturnParent, shouldDefineKey) {
-
-        if (!result && item.type === 'Property') {
-          if (typeof name === "string") {
-            let arr = [];
-            arr.push(name);
-            name = arr;
-          }
-          let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));  
-
-          if (namesResult.length) {
-            soughtObject = item;
-            return;
-          }
-
-          else if (!result && item.value.children) {
-            item.value.children.forEach (child => {
-              findObj(child, name, shouldReturnParent, shouldDefineKey);
-              if (!result && soughtObject) {
-                if (shouldReturnParent) soughtObject = item;
-                result = true;
-                return;
-              }
-            })
-          }
-        }
-
-        else if (!result && item.type === 'Object') {
-          item.children.forEach (child => {
-            findObj(child, name, shouldReturnParent, shouldDefineKey);
-            if (!result && soughtObject) {
-              if (shouldReturnParent) soughtObject = item;
-              result = true;
-              return;
-            }
-          });
-        }
-
-        else return soughtObject;
-      }
-      
-      return soughtObject;
-    }
-
-    function validateHeaders(obj) {
-      return true;
-
-    }
-
-  }
+<script src="build/linter.js">
+   
 </script>
 
   <!-- в этом скрипте находятся спеки -->
@@ -219,8 +41,1509 @@
     ]
   }`;
 
+  const string1 = `{
+  "block": "page-index",
+  "content": [
+    { "block": "header",
+      "content": [
+       { "block": "header",
+         "elem": "content",
+         "content": [
+           { "block": "header",
+             "elem": "logo"
+           },
+           { "block": "header",
+             "elem": "onoffswitch",
+             "mix": [
+               {"block": "onoffswitch"}
+             ],
+             "content": [
+               { "block": "onoffswitch",
+                 "elem": "button"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "block": "page-index",
+      "elem": "layout",
+      "mix": [
+        {"block": "layout"}
+      ],
+      "content": [
+        { "block": "page-index",
+          "elem": "container",
+          "mix": [
+            {"block": "layout", "elem": "container", "elemMods": {"align": "center", "size": "m"}}
+          ],
+          "content": [
+            { "block": "page-index",
+              "elem": "grid",
+              "mix": [
+                {"block": "grid", "mods": {"m-columns": "10", "col-gap": "full", "row-gap": "xxl"}}
+              ],
+              "content": [
+                { "block": "payment",
+                  "mix": [
+                    {"block": "form", "mods": {"border": "all"}},
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
+                  ],
+                  "content": [
+                    { "block": "payment",
+                      "elem": "header",
+                      "mix": [
+                        {"block": "form", "elem": "item", "elemMods": {"space-v": "l", "space-h": "xl", "border": "bottom"}}
+                      ],
+                      "content":
+                        { "block": "text",
+                          "mix": [
+                            {"block": "text", "mods": {"view": "primary", "size": "xxl"}}
+                          ],
+                           "content":
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                        }
+                    },
+                    { "block": "payment",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "form", "elem": "item", "elemMods": {"space-v": "xxxl", "space-h": "xl", "border": "bottom"}}
+                      ],
+                      "content": [
+                        { "block": "payment",
+                          "elem": "item",
+                          "mix": [
+                            {"block": "form", "elem": "item", "elemMods": {"indent-b": "xl", "distribute": "between", "vertical-align": "center"}}
+                          ],
+                          "content": [
+                            { "block": "payment",
+                              "elem": "label",
+                              "mix": [
+                                {"block": "form", "elem": "label", "mods": {"width": "default"}},
+                                {"block": "text", "mods": {"view": "primary", "size": "l"}}
+                              ],
+                              "content": [
+                                { "block": "text", "elem": "word", "elemMods": {"width": "l"}
+                                }
+                              ]
+                            },
+                            { "block": "payment",
+                              "elem": "control",
+                              "mix": [
+                                {"block": "form", "elem": "control"}
+                              ],
+                              "content":
+                                {"block": "input", "mods": {"size": "l"}}
+                            }
+                          ]
+                        },
+                        { "block": "payment",
+                          "elem": "item",
+                          "mix": [
+                            {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "vertical-align": "center"}}
+                          ],
+                          "content": [
+                            { "block": "payment",
+                              "elem": "label",
+                              "mix": [
+                                {"block": "form", "elem": "label", "mods": {"width": "default"}},
+                                {"block": "text", "mods": {"view": "primary", "size": "l"}}
+                              ],
+                              "content": [
+                                { "block": "text", "elem": "word", "elemMods": {"width": "l"}
+                                }
+                              ]
+                            },
+                            { "block": "payment",
+                              "elem": "control",
+                              "mix": [
+                                {"block": "form", "elem": "control"}
+                              ],
+                              "content":
+                                {"block": "input", "mods": {"size": "l"}}
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "payment",
+                      "elem": "footer",
+                      "mix": [
+                        {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "border": "bottom", "vertical-align": "center", "space-v": "l", "space-h": "xl"}}
+                      ],
+                      "content": [
+                        { "block": "text",
+                          "mix": [
+                            {"block": "text", "mods": {"view": "primary", "type": "h3", "size": "l"}}
+                          ],
+                          "content":
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                        },
+                        { "block": "button",
+                          "mods": {"size": "l"}}
+                      ]
+                    }
+                  ]
+                },
+                { "block": "warning",
+                  "mix": [
+                    {"block": "informer", "mods": {"view": "default", "border": "all"}},
+                    {"block": "theme", "mods": {"color": "project-warning"}},
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
+                  ],
+                  "content": [
+                    { "block": "warning",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "informer", "elem": "content", "elemMods": {"distribute": "center", "space-a": "xxl"}}
+                      ],
+                      "content": [
+                        { "block": "warning",
+                          "elem": "placeholder",
+                          "mix": [
+                            {"block": "placeholder", "mods": {"view": "primary", "size": "m"}}
+                          ]
+                        },
+                        { "block": "warning",
+                          "elem": "text",
+                          "mix": [
+                            {"block": "text", "mods": {"view": "primary", "size": "xl"}}
+                          ],
+                          "content": [
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "s"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "l"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "m"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "m"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "s"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "m"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "l"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "s"
+                              }
+                            },
+                            {
+                              "block": "text",
+                              "elem": "word",
+                              "elemMods": {
+                                  "width": "m"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "warning",
+                      "elem": "button-wrapper",
+                      "mix": [
+                        {"block": "informer", "elem": "action", "elemMods": {"distribute": "center", "space-a": "xl"}}
+                      ],
+                      "content": [
+                        { "block": "button",
+                          "mods": {"size": "l"}
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            { "block": "page-index",
+              "elem": "grid",
+              "mix": [
+                {"block": "grid", "mods": {"m-columns": "10", "col-gap": "half", "row-gap": "xxl"}}
+              ],
+              "content": [
+                { "block": "product",
+                  "mix": [
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
+                    {"block": "card", "mods": {"view": "default","border": "all"}}
+                  ],
+                  "content": [
+                    { "block": "product",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "product",
+                          "elem": "image",
+                          "mix": [
+                            {"block": "image"},
+                            {"block": "theme", "mods": {"color": "project-inverse"}}
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "product",
+                      "elem": "footer",
+                      "mix": [
+                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "m"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                          ]
+                        },
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "s"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                { "block": "product",
+                  "mix": [
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
+                    {"block": "card", "mods": {"view": "default","border": "all"}}
+                  ],
+                  "content": [
+                    { "block": "product",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "product",
+                          "elem": "image",
+                          "mix": [
+                            {"block": "image"},
+                            {"block": "theme", "mods": {"color": "project-inverse"}}
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "product",
+                      "elem": "footer",
+                      "mix": [
+                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "m"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                          ]
+                        },
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "s"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                { "block": "product",
+                  "mix": [
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
+                    {"block": "card", "mods": {"view": "default","border": "all"}}
+                  ],
+                  "content": [
+                    { "block": "product",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "product",
+                          "elem": "image",
+                          "mix": [
+                            {"block": "image"},
+                            {"block": "theme", "mods": {"color": "project-inverse"}}
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "product",
+                      "elem": "footer",
+                      "mix": [
+                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "m"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                          ]
+                        },
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "s"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                { "block": "product",
+                  "mix": [
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
+                    {"block": "card", "mods": {"view": "default","border": "all"}}
+                  ],
+                  "content": [
+                    { "block": "product",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "product",
+                          "elem": "image",
+                          "mix": [
+                            {"block": "image"},
+                            {"block": "theme", "mods": {"color": "project-inverse"}}
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "product",
+                      "elem": "footer",
+                      "mix": [
+                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "m"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                          ]
+                        },
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "s"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                { "block": "product",
+                  "mix": [
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
+                    {"block": "card", "mods": {"view": "default","border": "all"}}
+                  ],
+                  "content": [
+                    { "block": "product",
+                      "elem": "content",
+                      "mix": [
+                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "product",
+                          "elem": "image",
+                          "mix": [
+                            {"block": "image"},
+                            {"block": "theme", "mods": {"color": "project-inverse"}}
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "product",
+                      "elem": "footer",
+                      "mix": [
+                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
+                      ],
+                      "content": [
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "m"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            }
+                          ]
+                        },
+                        { "block": "text",
+                          "mods": {"view": "primary","size": "s"},
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            { "block": "page-index",
+              "elem": "grid",
+              "mix": [
+                {"block": "grid", "mods": {"m-columns": "12", "col-gap": "full", "row-gap": "xxl"}}
+              ],
+              "content": [
+                { "block": "history",
+                  "mix": [
+                   {"block": "list", "mods": {"view": "default","border": "all"}},
+                   {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "8"}}
+                  ],
+                  "content": [
+                    { "block": "history",
+                      "elem": "transaction",
+                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
+                      "content": [
+                        { "block": "history",
+                          "elem": "show",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "short"},
+                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "details",
+                              "content": [
+                                { "block": "history",
+                                  "elem": "time",
+                                  "content": [
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "block": "history",
+                                  "elem": "destination",
+                                  "mix": [
+                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
+                                  ],
+                                  "content": [
+                                    { "block": "history",
+                                      "elem": "pic",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
+                                      ],
+                                      "content": [
+                                        { "block": "brand-logo",
+                                          "mods": {"name": "yota","size": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "history",
+                                      "elem": "label",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "block"}
+                                      ],
+                                      "content": [
+                                        { "block": "text",
+                                          "mods": {"view": "primary", "size": "l"},
+                                          "content": [
+                                            { "block": "text",
+                                              "elem": "word",
+                                              "elemMods": {"width": "l"}
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "sum",
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        { "block": "history",
+                          "elem": "hide",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
+                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "description",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "actions",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "history",
+                      "elem": "transaction",
+                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
+                      "content": [
+                        { "block": "history",
+                          "elem": "show",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "short"},
+                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "details",
+                              "content": [
+                                { "block": "history",
+                                  "elem": "time",
+                                  "content": [
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "block": "history",
+                                  "elem": "destination",
+                                  "mix": [
+                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
+                                  ],
+                                  "content": [
+                                    { "block": "history",
+                                      "elem": "pic",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
+                                      ],
+                                      "content": [
+                                        { "block": "brand-logo",
+                                          "mods": {"name": "mts","size": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "history",
+                                      "elem": "label",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "block"}
+                                      ],
+                                      "content": [
+                                        { "block": "text",
+                                          "mods": {"view": "primary", "size": "l"},
+                                          "content": [
+                                            { "block": "text",
+                                              "elem": "word",
+                                              "elemMods": {"width": "l"}
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "sum",
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        { "block": "history",
+                          "elem": "hide",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
+                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "description",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "type": "h2", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "actions",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "history",
+                      "elem": "transaction",
+                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
+                      "content": [
+                        { "block": "history",
+                          "elem": "show",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "short"},
+                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "details",
+                              "content": [
+                                { "block": "history",
+                                  "elem": "time",
+                                  "content": [
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "block": "history",
+                                  "elem": "destination",
+                                  "mix": [
+                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
+                                  ],
+                                  "content": [
+                                    { "block": "history",
+                                      "elem": "pic",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
+                                      ],
+                                      "content": [
+                                        { "block": "brand-logo",
+                                          "mods": {"name": "kcell","size": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "history",
+                                      "elem": "label",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "block"}
+                                      ],
+                                      "content": [
+                                        { "block": "text",
+                                          "mods": {"view": "primary", "size": "l"},
+                                          "content": [
+                                            { "block": "text",
+                                              "elem": "word",
+                                              "elemMods": {"width": "l"}
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "sum",
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        { "block": "history",
+                          "elem": "hide",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
+                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "description",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "actions",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "history",
+                      "elem": "transaction",
+                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
+                      "content": [
+                        { "block": "history",
+                          "elem": "show",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "short"},
+                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "details",
+                              "content": [
+                                { "block": "history",
+                                  "elem": "time",
+                                  "content": [
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "text",
+                                      "mods": {"view": "ghost", "size": "s"},
+                                      "content": [
+                                        { "block": "text",
+                                          "elem": "word",
+                                          "elemMods": {"width": "m"}
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                { "block": "history",
+                                  "elem": "destination",
+                                  "mix": [
+                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
+                                  ],
+                                  "content": [
+                                    { "block": "history",
+                                      "elem": "pic",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
+                                      ],
+                                      "content": [
+                                        { "block": "brand-logo",
+                                          "mods": {"name": "megafon","size": "m"}
+                                        }
+                                      ]
+                                    },
+                                    { "block": "history",
+                                      "elem": "label",
+                                      "mix": [
+                                        {"block": "icon-plus", "elem": "block"}
+                                      ],
+                                      "content": [
+                                        { "block": "text",
+                                          "mods": {"view": "primary", "size": "l"},
+                                          "content": [
+                                            { "block": "text",
+                                              "elem": "word",
+                                              "elemMods": {"width": "l"}
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "sum",
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        { "block": "history",
+                          "elem": "hide",
+                          "mix": [
+                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
+                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
+                          ],
+                          "content": [
+                            { "block": "history",
+                              "elem": "description",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "type": "h1", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    },
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            { "block": "history",
+                              "elem": "actions",
+                              "mix": [
+                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
+                              ],
+                              "content": [
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "l"}
+                                    }
+                                  ]
+                                },
+                                { "block": "text",
+                                  "mods": {"view": "primary", "size": "l"},
+                                  "content": [
+                                    { "block": "text",
+                                      "elem": "word",
+                                      "elemMods": {"width": "m"}
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                { "block": "page-index",
+                  "elem": "commercial",
+                  "mix": [
+                    {"block": "commercial"},
+                    {"block": "card", "mods": {"view": "default"}},
+                    {"block": "theme", "mods": {"color": "project-brand"}},
+                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "4"}}
+                  ],
+                  "content": [
+                    { "block": "commercial",
+                      "elem": "pic",
+                      "mix": [
+                        {"block": "card", "elem": "content", "elemMods": {"space-a": "xxl"}}
+                      ],
+                      "content": [
+                        { "block": "commercial",
+                          "elem": "image",
+                          "mix": [
+                            {"block": "image"},
+                            {"block": "theme", "mods": {"color": "project-inverse"}}
+                          ]
+                        }
+                      ]
+                    },
+                    { "block": "commercial",
+                      "elem": "info",
+                      "mix": [
+                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "xxl"}}
+                      ],
+                      "content": [
+                        { "block": "commercial",
+                          "elem": "text",
+                          "mix": [
+                            {"block": "text", "mods": {"view": "primary", "size": "s"}}
+                          ],
+                          "content": [
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "s"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "s"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "l"}
+                            },
+                            { "block": "text",
+                              "elem": "word",
+                              "elemMods": {"width": "m"}
+                            }
+                          ]
+                        },
+                        { "block": "commercial",
+                          "elem": "navigation",
+                          "content": [
+                            { "block": "commercial",
+                              "elem": "page-button"
+                            },
+                            { "block": "commercial",
+                              "elem": "page-button"
+                            },
+                            { "block": "commercial",
+                              "elem": "page-button"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    { "block": "footer",
+      "content": [
+        { "block": "footer",
+          "elem": "content",
+          "content": [
+            { "block": "footer",
+              "elem": "text",
+              "mix": [
+                {"block": "text", "mods": {"view": "primary", "size": "l"}}
+              ],
+              "content": [
+                { "block": "text",
+                  "elem": "word",
+                  "elemMods": {"width": "l"}
+                },
+                { "block": "text",
+                  "elem": "word",
+                  "elemMods": {"width": "s"}
+                }
+              ]
+            },
+            { "block": "footer",
+              "elem": "text",
+              "mix": [
+                {"block": "text", "mods": {"view": "primary", "size": "l"}}
+              ],
+              "content": [
+                { "block": "text",
+                  "elem": "word",
+                  "elemMods": {"width": "l"}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}`; 
 
-    describe("Проверяет, что на странице есть только один h1", function() {
+
+const string2 = `{
+    "block": "form",
+    "content": [
+        { "block": "form",
+          "elem": "label",
+          "content": 
+            {
+              "block": "text",
+              "mods": 
+              { 
+                "size": "m" 
+              }
+          }
+        },
+        { 
+          "block": "input", 
+          "mods": 
+          { 
+            "size": "l" 
+          } 
+        },
+        { 
+          "block": "input", 
+          "mods": 
+          { 
+            "size": "s" 
+          } 
+        }
+    ]
+}`;
+
+  const string3 = `{
+    "block": "form",
+    "content": {
+      "block": "form",
+      "elem": "content",
+      "content": { "block": "input", "mods": { "size": "l" } },
+      "mix": [{ "block": "form", "elem": "item", "mods": {  "space-v": "xl", "space-h": "xxl"}}]
+      }
+  }`;
+
+  const string4 = `{
+    "block": "form",
+    "content": [
+        {
+            "block": "form",
+            "elem": "header",
+            "content": [
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xl"
+                    }
+                },
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xxl"
+                    }
+                },
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "xxxl"
+                    }
+                },
+                {
+                    "block": "text",
+                    "mods": {
+                        "size": "m"
+                    }
+                }
+            ]
+        },
+        {
+            "block": "input",
+            "mods": {
+                "size": "l"
+            }
+        }
+    ]
+}`;
+
+const string5 = `{
+    "block": "form",
+    "content": {
+        "block": "form",
+        "elem": "content",
+        "content": [
+            {
+                "block": "form",
+                "mix": [{ "block": "form", "elem": "item", "mods": { "indent-b": "xl" } }],
+                "content": { "block": "input", "mods": { "size": "l" } }
+            },
+            {
+                "block": "form",
+                "elem":  "content-item",
+                "mix": [{ "block": "form", "elem": "item", "mods": { "indent-b": "l" } }],
+                "content": { "block": "input", "mods": { "size": "l" } }
+            },
+            {
+                "block": "form",
+                "elem":  "content-item",
+                "content": { "block": "input", "mods": { "size": "l" } }
+            }
+        ]
+    }
+}`;
+
+const string6 = `{
+  "block": "form",
+  "content": [
+      {
+          "block": "input",
+          "mods": {
+              "size": "l"
+          }
+      },
+      {
+          "block": "form",
+          "elem": "footer",
+          "content": [
+              {
+                  "block": "text",
+                  "mods": {
+                      "size": "l"
+                  }
+              },
+              {
+                  "block": "text",
+                  "mods": {
+                      "size": "xxl"
+                  }
+              }
+          ]
+      }
+  ]
+}`
+
+const string7 = `{
+  "block": "form",
+  "content": [
+      {
+          "block": "form",
+          "elem": "header",
+          "mix": [ { "block": "form", "elem": "item", "mods": { "space-v": "l", "space-h": "xl" } } ]
+      },      
+      {
+          "block": "input",
+          "mods": {
+              "size": "l"
+          }
+      },
+      {
+        "block": "form",
+        "elem": "footer",
+        "mix": [ { "block": "form", "elem": "item", "mods": { "space-v": "s", "space-h": "m" } } ]
+    }
+  ]
+}`
+
+
+  describe("Проверяет, что на странице есть только один h1", function() {
 
       it("правильный случай", function() {
         assert.equal(linter(form1, true));

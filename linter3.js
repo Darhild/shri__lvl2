@@ -1499,7 +1499,115 @@ const string7 = `{
   ]
 }`
 
-//console.log(lint(string1));
+const string8 = `{ "block": "payment",
+"mix": [
+  {"block": "form", "mods": {"border": "all"}},
+  {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
+],
+"content": [
+  { "block": "payment",
+    "elem": "header",
+    "mix": [
+      {"block": "form", "elem": "item", "elemMods": {"space-v": "l", "space-h": "xl", "border": "bottom"}}
+    ],
+    "content":
+      { "block": "text",
+        "mix": [
+          {"block": "text", "mods": {"view": "primary", "size": "xxl"}}
+        ],
+         "content":
+          { "block": "text",
+            "elem": "word",
+            "elemMods": {"width": "l"}
+          }
+      }
+  },
+  { "block": "payment",
+    "elem": "content",
+    "mix": [
+      {"block": "form", "elem": "item", "elemMods": {"space-v": "xxxl", "space-h": "xl", "border": "bottom"}}
+    ],
+    "content": [
+      { "block": "payment",
+        "elem": "item",
+        "mix": [
+          {"block": "form", "elem": "item", "elemMods": {"indent-b": "xl", "distribute": "between", "vertical-align": "center"}}
+        ],
+        "content": [
+          { "block": "payment",
+            "elem": "label",
+            "mix": [
+              {"block": "form", "elem": "label", "mods": {"width": "default"}},
+              {"block": "text", "mods": {"view": "primary", "size": "l"}}
+            ],
+            "content": [
+              { "block": "text", "elem": "word", "elemMods": {"width": "l"}
+              }
+            ]
+          },
+          { "block": "payment",
+            "elem": "control",
+            "mix": [
+              {"block": "form", "elem": "control"}
+            ],
+            "content":
+              {"block": "input", "mods": {"size": "l"}}
+          }
+        ]
+      },
+      { "block": "payment",
+        "elem": "item",
+        "mix": [
+          {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "vertical-align": "center"}}
+        ],
+        "content": [
+          { "block": "payment",
+            "elem": "label",
+            "mix": [
+              {"block": "form", "elem": "label", "mods": {"width": "default"}},
+              {"block": "text", "mods": {"view": "primary", "size": "l"}}
+            ],
+            "content": [
+              { "block": "text", "elem": "word", "elemMods": {"width": "l"}
+              }
+            ]
+          },
+          { "block": "payment",
+            "elem": "control",
+            "mix": [
+              {"block": "form", "elem": "control"}
+            ],
+            "content":
+              {"block": "input", "mods": {"size": "l"}}
+          }
+        ]
+      }
+    ]
+  },
+  { "block": "payment",
+    "elem": "footer",
+    "mix": [
+      {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "border": "bottom", "vertical-align": "center", "space-v": "l", "space-h": "xl"}}
+    ],
+    "content": [
+      { "block": "text",
+        "mix": [
+          {"block": "text", "mods": {"view": "primary", "type": "h3", "size": "l"}}
+        ],
+        "content":
+          { "block": "text",
+            "elem": "word",
+            "elemMods": {"width": "l"}
+          }
+      },
+      { "block": "button",
+        "mods": {"size": "l"}}
+    ]
+  }
+]
+}`
+
+console.log(lint(string8));
 
 window.lint = lint;
 
@@ -1557,6 +1665,11 @@ function lint(string) {
 
   const json = JSON.parse(string);
   const ast = jsonToAst(json, string);
+
+  const object = findObjectJson(json, "form", false);
+  console.log(object);
+
+
   const form = findObject(ast, "form", true);
   console.log(form);
       
@@ -1818,6 +1931,37 @@ return errors;
           });
   }
 
+  function findObjectJson (json, name, shouldDefineKey) {
+    let soughtItem = false;
+
+    findObjJson(json, name, shouldDefineKey);
+
+    function findObjJson (obj, name, shouldDefineKey) {
+      for (prop in obj) {
+        if (Array.isArray(obj[prop])) {
+          obj[prop].forEach(item => findObjJson(item, name, shouldDefineKey));
+          if (soughtItem) {
+            if(prop === "mix") soughtItem = obj;
+            return;
+          }          
+        }
+  
+        else if (typeof obj[prop] === 'object') {
+          findObjJson(obj[prop], name, shouldDefineKey)
+        }
+  
+        else if (typeof obj[prop] === 'string') {
+          if ((shouldDefineKey && prop === name) || (obj[prop] === name)) soughtItem = true;    
+        }
+
+        else return;
+      }
+    }
+    
+    if (typeof soughtItem === "object") return soughtItem;
+    else return false;
+  }
+
   function locateValue(raw, numberOfObjects) {
     let loc = {
       start: {},
@@ -1852,7 +1996,7 @@ return errors;
     let {column: endColumn, line: endLine} = locateLineColumn (raw, wholeStr);
     
     loc.end.line = endLine;
-    loc.end.column = endColumn + 1;
+    loc.end.column = endColumn;
 
     return loc;
 

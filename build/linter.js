@@ -1852,7 +1852,7 @@ return errors;
     let {column: endColumn, line: endLine} = locateLineColumn (raw, wholeStr);
     
     loc.end.line = endLine;
-    loc.end.column = endColumn + 1;
+    loc.end.column = endColumn;
 
     return loc;
 
