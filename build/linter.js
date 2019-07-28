@@ -1389,19 +1389,22 @@ const string2 = `{
                 {
                     "block": "text",
                     "mods": {
-                        "size": "xl"
+                        "size": "xl",
+                        "type": "h2"
                     }
                 },
                 {
                     "block": "text",
                     "mods": {
-                        "size": "xxl"
+                        "size": "xxl",
+                        "type": "h3"
                     }
                 },
                 {
                     "block": "text",
                     "mods": {
-                        "size": "xxxl"
+                        "size": "xxxl",
+                        "type": "h1"
                     }
                 },
                 {
@@ -1607,7 +1610,7 @@ const string8 = `{ "block": "payment",
 ]
 }`
 
-console.log(lint(string1));
+console.log(lint(string4));
 
 window.lint = lint;
 
@@ -1685,7 +1688,7 @@ function lint(string) {
       
 //      console.log(jsonToAst(json));
 
-
+/*
 if(form) {
   validateInputSizes(form);
   validateContentSpaces(form);
@@ -1694,7 +1697,7 @@ if(form) {
   validateHeaderFooterText(form, "footer");
   validateHeaderFooterSpaces(form, "header");
   validateHeaderFooterSpaces(form, "footer");  
-}
+}*/
 
 return errors;
   
@@ -1720,13 +1723,10 @@ return errors;
       }
     }
 
-    if (h2) compareLocation(h2, h1[0], errorMessages.invalidH2);
+    if (h2 && h1) compareLocation(h2, h1[0], errorMessages.invalidH2);
 
-    if (h3) {
-      compareLocation(h3, h2, errorMessages.invalidH3);
-      compareLocation(h3, h1[0], errorMessages.invalidH3);
-    }
-  }
+    if (h3 && h2) compareLocation(h3, h2, errorMessages.invalidH3);
+}
 
   function compareLocation(item1, item2, errorMessage) {
     let result = [];
@@ -1753,8 +1753,8 @@ return errors;
   }
 
   function compareLoc(item1, item2) {
-      if (item1.locate.start.line !== item2.locate.start.line) return item1.locate.start.line > item2.locate.start.line;
-      else return item1.locate.start.column > item2.locate.start.column;
+      if (item1.locate.start.line !== item2.locate.start.line) return item1.locate.start.line < item2.locate.start.line;
+      else return item1.locate.start.column < item2.locate.start.column;
   }
 
   function findObjects (item, name, shouldReturnParent, shouldDefineKey = false) {
