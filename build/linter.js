@@ -1,1626 +1,6 @@
-const string1 = `{
-  "block": "page-index",
-  "content": [
-    { "block": "header",
-      "content": [
-       { "block": "header",
-         "elem": "content",
-         "content": [
-           { "block": "header",
-             "elem": "logo"
-           },
-           { "block": "header",
-             "elem": "onoffswitch",
-             "mix": [
-               {"block": "onoffswitch"}
-             ],
-             "content": [
-               { "block": "onoffswitch",
-                 "elem": "button"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    { "block": "page-index",
-      "elem": "layout",
-      "mix": [
-        {"block": "layout"}
-      ],
-      "content": [
-        { "block": "page-index",
-          "elem": "container",
-          "mix": [
-            {"block": "layout", "elem": "container", "elemMods": {"align": "center", "size": "m"}}
-          ],
-          "content": [
-            { "block": "page-index",
-              "elem": "grid",
-              "mix": [
-                {"block": "grid", "mods": {"m-columns": "10", "col-gap": "full", "row-gap": "xxl"}}
-              ],
-              "content": [
-                { "block": "payment",
-                  "mix": [
-                    {"block": "form", "mods": {"border": "all"}},
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
-                  ],
-                  "content": [
-                    { "block": "payment",
-                      "elem": "header",
-                      "mix": [
-                        {"block": "form", "elem": "item", "elemMods": {"space-v": "l", "space-h": "xl", "border": "bottom"}}
-                      ],
-                      "content":
-                        { "block": "text",
-                          "mix": [
-                            {"block": "text", "mods": {"view": "primary", "type": "h1"}}
-                          ],
-                           "content":
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                        }
-                    },
-                    { "block": "payment",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "form", "elem": "item", "elemMods": {"space-v": "xxxl", "space-h": "xl", "border": "bottom"}}
-                      ],
-                      "content": [
-                        { "block": "payment",
-                          "elem": "item",
-                          "mix": [
-                            {"block": "form", "elem": "item", "elemMods": {"indent-b": "xl", "distribute": "between", "vertical-align": "center"}}
-                          ],
-                          "content": [
-                            { "block": "payment",
-                              "elem": "label",
-                              "mix": [
-                                {"block": "form", "elem": "label", "mods": {"width": "default"}},
-                                {"block": "text", "mods": {"view": "primary", "type": "h2"}}
-                              ],
-                              "content": [
-                                { "block": "text", "elem": "word", "elemMods": {"width": "l"}
-                                }
-                              ]
-                            },
-                            { "block": "payment",
-                              "elem": "control",
-                              "mix": [
-                                {"block": "form", "elem": "control"}
-                              ],
-                              "content":
-                                {"block": "input", "mods": {"size": "l"}}
-                            }
-                          ]
-                        },
-                        { "block": "payment",
-                          "elem": "item",
-                          "mix": [
-                            {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "vertical-align": "center"}}
-                          ],
-                          "content": [
-                            { "block": "payment",
-                              "elem": "label",
-                              "mix": [
-                                {"block": "form", "elem": "label", "mods": {"width": "default"}},
-                                {"block": "text", "mods": {"view": "primary", "size": "l"}}
-                              ],
-                              "content": [
-                                { "block": "text", "elem": "word", "elemMods": {"width": "l"}
-                                }
-                              ]
-                            },
-                            { "block": "payment",
-                              "elem": "control",
-                              "mix": [
-                                {"block": "form", "elem": "control"}
-                              ],
-                              "content":
-                                {"block": "input", "mods": {"size": "l"}}
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "payment",
-                      "elem": "footer",
-                      "mix": [
-                        {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "border": "bottom", "vertical-align": "center", "space-v": "l", "space-h": "xl"}}
-                      ],
-                      "content": [
-                        { "block": "text",
-                          "mix": [
-                            {"block": "text", "mods": {"view": "primary", "type": "h3", "size": "l"}}
-                          ],
-                          "content":
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                        },
-                        { "block": "button",
-                          "mods": {"size": "l"}}
-                      ]
-                    }
-                  ]
-                },
-                { "block": "warning",
-                  "mix": [
-                    {"block": "informer", "mods": {"view": "default", "border": "all"}},
-                    {"block": "theme", "mods": {"color": "project-warning"}},
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
-                  ],
-                  "content": [
-                    { "block": "warning",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "informer", "elem": "content", "elemMods": {"distribute": "center", "space-a": "xxl"}}
-                      ],
-                      "content": [
-                        { "block": "warning",
-                          "elem": "placeholder",
-                          "mix": [
-                            {"block": "placeholder", "mods": {"view": "primary", "size": "m"}}
-                          ]
-                        },
-                        { "block": "warning",
-                          "elem": "text",
-                          "mix": [
-                            {"block": "text", "mods": {"view": "primary", "size": "xl"}}
-                          ],
-                          "content": [
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "s"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "l"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "m"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "m"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "s"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "m"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "l"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "s"
-                              }
-                            },
-                            {
-                              "block": "text",
-                              "elem": "word",
-                              "elemMods": {
-                                  "width": "m"
-                              }
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "warning",
-                      "elem": "button-wrapper",
-                      "mix": [
-                        {"block": "informer", "elem": "action", "elemMods": {"distribute": "center", "space-a": "xl"}}
-                      ],
-                      "content": [
-                        { "block": "button",
-                          "mods": {"size": "l"}
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            { "block": "page-index",
-              "elem": "grid",
-              "mix": [
-                {"block": "grid", "mods": {"m-columns": "10", "col-gap": "half", "row-gap": "xxl"}}
-              ],
-              "content": [
-                { "block": "product",
-                  "mix": [
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
-                    {"block": "card", "mods": {"view": "default","border": "all"}}
-                  ],
-                  "content": [
-                    { "block": "product",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "product",
-                          "elem": "image",
-                          "mix": [
-                            {"block": "image"},
-                            {"block": "theme", "mods": {"color": "project-inverse"}}
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "product",
-                      "elem": "footer",
-                      "mix": [
-                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "m"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                          ]
-                        },
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "s"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                { "block": "product",
-                  "mix": [
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
-                    {"block": "card", "mods": {"view": "default","border": "all"}}
-                  ],
-                  "content": [
-                    { "block": "product",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "product",
-                          "elem": "image",
-                          "mix": [
-                            {"block": "image"},
-                            {"block": "theme", "mods": {"color": "project-inverse"}}
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "product",
-                      "elem": "footer",
-                      "mix": [
-                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "m"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                          ]
-                        },
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "s"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                { "block": "product",
-                  "mix": [
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
-                    {"block": "card", "mods": {"view": "default","border": "all"}}
-                  ],
-                  "content": [
-                    { "block": "product",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "product",
-                          "elem": "image",
-                          "mix": [
-                            {"block": "image"},
-                            {"block": "theme", "mods": {"color": "project-inverse"}}
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "product",
-                      "elem": "footer",
-                      "mix": [
-                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "m"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                          ]
-                        },
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "s"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                { "block": "product",
-                  "mix": [
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
-                    {"block": "card", "mods": {"view": "default","border": "all"}}
-                  ],
-                  "content": [
-                    { "block": "product",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "product",
-                          "elem": "image",
-                          "mix": [
-                            {"block": "image"},
-                            {"block": "theme", "mods": {"color": "project-inverse"}}
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "product",
-                      "elem": "footer",
-                      "mix": [
-                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "m"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                          ]
-                        },
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "s"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                { "block": "product",
-                  "mix": [
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "2"}},
-                    {"block": "card", "mods": {"view": "default","border": "all"}}
-                  ],
-                  "content": [
-                    { "block": "product",
-                      "elem": "content",
-                      "mix": [
-                        {"block": "card", "elem": "content", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "product",
-                          "elem": "image",
-                          "mix": [
-                            {"block": "image"},
-                            {"block": "theme", "mods": {"color": "project-inverse"}}
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "product",
-                      "elem": "footer",
-                      "mix": [
-                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "m"}}
-                      ],
-                      "content": [
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "m"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            }
-                          ]
-                        },
-                        { "block": "text",
-                          "mods": {"view": "primary","size": "s"},
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            { "block": "page-index",
-              "elem": "grid",
-              "mix": [
-                {"block": "grid", "mods": {"m-columns": "12", "col-gap": "full", "row-gap": "xxl"}}
-              ],
-              "content": [
-                { "block": "history",
-                  "mix": [
-                   {"block": "list", "mods": {"view": "default","border": "all"}},
-                   {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "8"}}
-                  ],
-                  "content": [
-                    { "block": "history",
-                      "elem": "transaction",
-                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
-                      "content": [
-                        { "block": "history",
-                          "elem": "show",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "short"},
-                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "details",
-                              "content": [
-                                { "block": "history",
-                                  "elem": "time",
-                                  "content": [
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                },
-                                { "block": "history",
-                                  "elem": "destination",
-                                  "mix": [
-                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
-                                  ],
-                                  "content": [
-                                    { "block": "history",
-                                      "elem": "pic",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
-                                      ],
-                                      "content": [
-                                        { "block": "brand-logo",
-                                          "mods": {"name": "yota","size": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "history",
-                                      "elem": "label",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "block"}
-                                      ],
-                                      "content": [
-                                        { "block": "text",
-                                          "mods": {"view": "primary", "size": "l"},
-                                          "content": [
-                                            { "block": "text",
-                                              "elem": "word",
-                                              "elemMods": {"width": "l"}
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "sum",
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        { "block": "history",
-                          "elem": "hide",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
-                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "description",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "actions",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "history",
-                      "elem": "transaction",
-                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
-                      "content": [
-                        { "block": "history",
-                          "elem": "show",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "short"},
-                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "details",
-                              "content": [
-                                { "block": "history",
-                                  "elem": "time",
-                                  "content": [
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                },
-                                { "block": "history",
-                                  "elem": "destination",
-                                  "mix": [
-                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
-                                  ],
-                                  "content": [
-                                    { "block": "history",
-                                      "elem": "pic",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
-                                      ],
-                                      "content": [
-                                        { "block": "brand-logo",
-                                          "mods": {"name": "mts","size": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "history",
-                                      "elem": "label",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "block"}
-                                      ],
-                                      "content": [
-                                        { "block": "text",
-                                          "mods": {"view": "primary", "size": "l"},
-                                          "content": [
-                                            { "block": "text",
-                                              "elem": "word",
-                                              "elemMods": {"width": "l"}
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "sum",
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        { "block": "history",
-                          "elem": "hide",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
-                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "description",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "type": "h2", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "actions",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "history",
-                      "elem": "transaction",
-                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
-                      "content": [
-                        { "block": "history",
-                          "elem": "show",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "short"},
-                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "details",
-                              "content": [
-                                { "block": "history",
-                                  "elem": "time",
-                                  "content": [
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                },
-                                { "block": "history",
-                                  "elem": "destination",
-                                  "mix": [
-                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
-                                  ],
-                                  "content": [
-                                    { "block": "history",
-                                      "elem": "pic",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
-                                      ],
-                                      "content": [
-                                        { "block": "brand-logo",
-                                          "mods": {"name": "kcell","size": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "history",
-                                      "elem": "label",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "block"}
-                                      ],
-                                      "content": [
-                                        { "block": "text",
-                                          "mods": {"view": "primary", "size": "l"},
-                                          "content": [
-                                            { "block": "text",
-                                              "elem": "word",
-                                              "elemMods": {"width": "l"}
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "sum",
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        { "block": "history",
-                          "elem": "hide",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
-                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "description",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "actions",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "history",
-                      "elem": "transaction",
-                      "mix":[{"block": "list", "elem": "item", "elemMods": {"border": "bottom","space-a": "l"}}],
-                      "content": [
-                        { "block": "history",
-                          "elem": "show",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "short"},
-                            {"block": "list", "elem": "item", "elemMods": {"vertical-align": "center"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "details",
-                              "content": [
-                                { "block": "history",
-                                  "elem": "time",
-                                  "content": [
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "text",
-                                      "mods": {"view": "ghost", "size": "s"},
-                                      "content": [
-                                        { "block": "text",
-                                          "elem": "word",
-                                          "elemMods": {"width": "m"}
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                },
-                                { "block": "history",
-                                  "elem": "destination",
-                                  "mix": [
-                                    {"block": "icon-plus", "mods": {"vertical-align": "center"}}
-                                  ],
-                                  "content": [
-                                    { "block": "history",
-                                      "elem": "pic",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "icon", "elemMods": {"indent-r": "s","indent-l": "l"}}
-                                      ],
-                                      "content": [
-                                        { "block": "brand-logo",
-                                          "mods": {"name": "megafon","size": "m"}
-                                        }
-                                      ]
-                                    },
-                                    { "block": "history",
-                                      "elem": "label",
-                                      "mix": [
-                                        {"block": "icon-plus", "elem": "block"}
-                                      ],
-                                      "content": [
-                                        { "block": "text",
-                                          "mods": {"view": "primary", "size": "l"},
-                                          "content": [
-                                            { "block": "text",
-                                              "elem": "word",
-                                              "elemMods": {"width": "l"}
-                                            }
-                                          ]
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "sum",
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        { "block": "history",
-                          "elem": "hide",
-                          "mix": [
-                            {"block": "e-accordion", "elem": "more", "elemMods": {"view": "default"}},
-                            {"block": "list", "elem": "item", "elemMods": {"indent-t": "m"}}
-                          ],
-                          "content": [
-                            { "block": "history",
-                              "elem": "description",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"indent-b": "m"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "type": "h1", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    },
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            },
-                            { "block": "history",
-                              "elem": "actions",
-                              "mix": [
-                                {"block": "list", "elem": "item", "elemMods": {"distribute": "between","indent-b": "l"}}
-                              ],
-                              "content": [
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "l"}
-                                    }
-                                  ]
-                                },
-                                { "block": "text",
-                                  "mods": {"view": "primary", "size": "l"},
-                                  "content": [
-                                    { "block": "text",
-                                      "elem": "word",
-                                      "elemMods": {"width": "m"}
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                { "block": "page-index",
-                  "elem": "commercial",
-                  "mix": [
-                    {"block": "commercial"},
-                    {"block": "card", "mods": {"view": "default"}},
-                    {"block": "theme", "mods": {"color": "project-brand"}},
-                    {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "4"}}
-                  ],
-                  "content": [
-                    { "block": "commercial",
-                      "elem": "pic",
-                      "mix": [
-                        {"block": "card", "elem": "content", "elemMods": {"space-a": "xxl"}}
-                      ],
-                      "content": [
-                        { "block": "commercial",
-                          "elem": "image",
-                          "mix": [
-                            {"block": "image"},
-                            {"block": "theme", "mods": {"color": "project-inverse"}}
-                          ]
-                        }
-                      ]
-                    },
-                    { "block": "commercial",
-                      "elem": "info",
-                      "mix": [
-                        {"block": "card", "elem": "footer", "elemMods": {"space-a": "xxl"}}
-                      ],
-                      "content": [
-                        { "block": "commercial",
-                          "elem": "text",
-                          "mix": [
-                            {"block": "text", "mods": {"view": "primary", "size": "s"}}
-                          ],
-                          "content": [
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "s"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "s"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "l"}
-                            },
-                            { "block": "text",
-                              "elem": "word",
-                              "elemMods": {"width": "m"}
-                            }
-                          ]
-                        },
-                        { "block": "commercial",
-                          "elem": "navigation",
-                          "content": [
-                            { "block": "commercial",
-                              "elem": "page-button"
-                            },
-                            { "block": "commercial",
-                              "elem": "page-button"
-                            },
-                            { "block": "commercial",
-                              "elem": "page-button"
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    { "block": "footer",
-      "content": [
-        { "block": "footer",
-          "elem": "content",
-          "content": [
-            { "block": "footer",
-              "elem": "text",
-              "mix": [
-                {"block": "text", "mods": {"view": "primary", "size": "l"}}
-              ],
-              "content": [
-                { "block": "text",
-                  "elem": "word",
-                  "elemMods": {"width": "l"}
-                },
-                { "block": "text",
-                  "elem": "word",
-                  "elemMods": {"width": "s"}
-                }
-              ]
-            },
-            { "block": "footer",
-              "elem": "text",
-              "mix": [
-                {"block": "text", "mods": {"view": "primary", "size": "l"}}
-              ],
-              "content": [
-                { "block": "text",
-                  "elem": "word",
-                  "elemMods": {"width": "l"}
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}`; 
-
-
-const string2 = `{
-    "block": "form",
-    "content": [
-        { "block": "form",
-          "elem": "label",
-          "content": 
-            {
-              "block": "text",
-              "mods": 
-              { 
-                "size": "m" 
-              }
-          }
-        },
-        { 
-          "block": "input", 
-          "mods": 
-          { 
-            "size": "l" 
-          } 
-        },
-        { 
-          "block": "input", 
-          "mods": 
-          { 
-            "size": "s" 
-          } 
-        }
-    ]
-}`;
-
-  const string3 = `{
-    "block": "form",
-    "content": {
-        "block": "form",
-        "elem": "content",
-        "content": { "block": "input", "mods": { "size": "l" } },
-        "mix": [{ "block": "form", "elem": "item", "mods": {  "space-v": "xl", "space-h": "xxl"}}]
-    }
-}`;
-
-  const string4 = `{
-    "block": "form",
-    "content": [
-        {
-            "block": "form",
-            "elem": "header",
-            "content": [
-                {
-                    "block": "text",
-                    "mods": {
-                        "size": "xl",
-                        "type": "h2"
-                    }
-                },
-                {
-                    "block": "text",
-                    "mods": {
-                        "size": "xxl",
-                        "type": "h3"
-                    }
-                },
-                {
-                    "block": "text",
-                    "mods": {
-                        "size": "xxxl",
-                        "type": "h1"
-                    }
-                },
-                {
-                    "block": "text",
-                    "mods": {
-                        "size": "m"
-                    }
-                }
-            ]
-        },
-        {
-            "block": "input",
-            "mods": {
-                "size": "l"
-            }
-        }
-    ]
-}`;
-
-const string5 = `{
-    "block": "form",
-    "content": {
-        "block": "form",
-        "elem": "content",
-        "content": [
-            {
-                "block": "form",
-                "mix": [{ "block": "form", "elem": "item", "mods": { "indent-b": "xl" } }],
-                "content": { "block": "input", "mods": { "size": "l" } }
-            },
-            {
-                "block": "form",
-                "elem":  "content-item",
-                "mix": [{ "block": "form", "elem": "item", "mods": { "indent-b": "l" } }],
-                "content": { "block": "input", "mods": { "size": "l" } }
-            },
-            {
-                "block": "form",
-                "elem":  "content-item",
-                "content": { "block": "input", "mods": { "size": "l" } }
-            }
-        ]
-    }
-}`;
-
-const string6 = `{
-  "block": "form",
-  "content": [
-      {
-          "block": "input",
-          "mods": {
-              "size": "l"
-          }
-      },
-      {
-          "block": "form",
-          "elem": "footer",
-          "content": [
-              {
-                  "block": "text",
-                  "mods": {
-                      "size": "l"
-                  }
-              },
-              {
-                  "block": "text",
-                  "mods": {
-                      "size": "xxl"
-                  }
-              }
-          ]
-      }
-  ]
-}`
-
-const string7 = `{
-  "block": "form",
-  "content": [
-      {
-          "block": "form",
-          "elem": "header",
-          "mix": [ { "block": "form", "elem": "item", "mods": { "space-v": "l", "space-h": "xl" } } ]
-      },      
-      {
-          "block": "input",
-          "mods": {
-              "size": "l"
-          }
-      },
-      {
-        "block": "form",
-        "elem": "footer",
-        "mix": [ { "block": "form", "elem": "item", "mods": { "space-v": "s", "space-h": "m" } } ]
-    }
-  ]
-}`
-
-const string8 = `{ "block": "payment",
-"mix": [
-  {"block": "form", "mods": {"border": "all"}},
-  {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
-],
-"content": [
-  { "block": "payment",
-    "elem": "header",
-    "mix": [
-      {"block": "form", "elem": "item", "elemMods": {"space-v": "l", "space-h": "xl", "border": "bottom"}}
-    ],
-    "content":
-      { "block": "text",
-        "mix": [
-          {"block": "text", "mods": {"view": "primary", "size": "xxl"}}
-        ],
-         "content":
-          { "block": "text",
-            "elem": "word",
-            "elemMods": {"width": "l"}
-          }
-      }
-  },
-  { "block": "payment",
-    "elem": "content",
-    "mix": [
-      {"block": "form", "elem": "item", "elemMods": {"space-v": "xxxl", "space-h": "xl", "border": "bottom"}}
-    ],
-    "content": [
-      { "block": "payment",
-        "elem": "item",
-        "mix": [
-          {"block": "form", "elem": "item", "elemMods": {"indent-b": "xl", "distribute": "between", "vertical-align": "center"}}
-        ],
-        "content": [
-          { "block": "payment",
-            "elem": "label",
-            "mix": [
-              {"block": "form", "elem": "label", "mods": {"width": "default"}},
-              {"block": "text", "mods": {"view": "primary", "size": "l"}}
-            ],
-            "content": [
-              { "block": "text", "elem": "word", "elemMods": {"width": "l"}
-              }
-            ]
-          },
-          { "block": "payment",
-            "elem": "control",
-            "mix": [
-              {"block": "form", "elem": "control"}
-            ],
-            "content":
-              {"block": "input", "mods": {"size": "l"}}
-          }
-        ]
-      },
-      { "block": "payment",
-        "elem": "item",
-        "mix": [
-          {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "vertical-align": "center"}}
-        ],
-        "content": [
-          { "block": "payment",
-            "elem": "label",
-            "mix": [
-              {"block": "form", "elem": "label", "mods": {"width": "default"}},
-              {"block": "text", "mods": {"view": "primary", "size": "l"}}
-            ],
-            "content": [
-              { "block": "text", "elem": "word", "elemMods": {"width": "l"}
-              }
-            ]
-          },
-          { "block": "payment",
-            "elem": "control",
-            "mix": [
-              {"block": "form", "elem": "control"}
-            ],
-            "content":
-              {"block": "input", "mods": {"size": "l"}}
-          }
-        ]
-      }
-    ]
-  },
-  { "block": "payment",
-    "elem": "footer",
-    "mix": [
-      {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "border": "bottom", "vertical-align": "center", "space-v": "l", "space-h": "xl"}}
-    ],
-    "content": [
-      { "block": "text",
-        "mix": [
-          {"block": "text", "mods": {"view": "primary", "type": "h3", "size": "l"}}
-        ],
-        "content":
-          { "block": "text",
-            "elem": "word",
-            "elemMods": {"width": "l"}
-          }
-      },
-      { "block": "button",
-        "mods": {"size": "l"}}
-    ]
-  }
-]
-}`
-
-console.log(lint(string4));
-
-window.lint = lint;
-
 function lint(string) {
 
   const errors = [];
-
-  let h1 = false,
-      h2 = false,
-      reference;
 
   const validSpacesX2 = {
     xxxs: "xs",
@@ -1648,22 +28,22 @@ function lint(string) {
   }
 
   const errorMessages = {
-    invalidH1: {"code": "TEXT.SEVERAL_H1", "error": "В документе не может быть больше одного заголовка h1"},
-    invalidH2: {"code": "TEXT.INVALID_H2_POSITION", "error": "Заголовок h2 следует раньше заголовка h1"},
-    invalidH3: {"code": "TEXT.INVALID_H3_POSITION", "error": "Заголовок h3 следует раньше заголовка h2"},
-    invalidInputSize: {"code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL", "error": "Подписи и поля в форме должны быть одного размера"},
-    invalidContentSpaceVer: {"code": "FORM.CONTENT_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ контентного элемента должен быть на 2 шага больше эталонного размера"},
-    invalidContentSpaceHor: {"code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ контентного элемента должен быть на 1 шаг больше эталонного размера"},
-    invalidContentItem: {"code": "FORM.CONTENT_ITEM_INDENT_IS_INVALID", "error": "Строки формы помечаются элементом формы content-item и должны отбиваться между собой с помощью модификатора нижнего отступа со значением модификатора indent-b элемента формы item на 1 шаг больше эталонного размера"},
-    invalidHeaderTextSize: {"code": "FORM.HEADER_TEXT_SIZE_IS_INVALID", "error": "Все текстовые блоки в заголовке формы должны быть со значением модификатора size на 2 шага больше эталонного размера"},
-    invalidHeaderSpaceVer: {"code": "FORM.HEADER_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ заголовка формы должен быть задан с помощью микса на него элемента формы item со значением модификатора space-v, равным эталонному размеру"},
-    invalidHeaderSpaceHor: {"code": "FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ заголовка формы должен быть на 1 шаг больше эталонного размера"},
-    invalidFooterSpaceVer: {"code": "FORM.FOOTER_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ подвала формы должен быть задан с помощью микса на него элемента формы item со значением модификатора space-v, равным эталонному размеру"},
-    invalidFooterSpaceHor: {"code": "FORM.FOOTER_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ подвала формы должен быть на 1 шаг больше эталонного размера"},
-    invalidFooterTextSize: {"code": "FORM.FOOTER_TEXT_SIZE_IS_INVALID", "error": "Все текстовые блоки в подвале формы должны быть со значением модификатора size на 2 шага больше эталонного размера"},
-    invalidH1: {"code": "TEXT.SEVERAL_H1", "error": "В документе не может быть больше одного заголовка h1"},
-    invalidH2: {"code": "TEXT.INVALID_H2_POSITION", "error": "Заголовок h2 следует раньше заголовка h1"},
-    invalidH3: {"code": "TEXT.INVALID_H3_POSITION", "error": "Заголовок h3 следует раньше заголовка h2"}
+    invalidH1: { "code": "TEXT.SEVERAL_H1", "error": "В документе не может быть больше одного заголовка h1" },
+    invalidH2: { "code": "TEXT.INVALID_H2_POSITION", "error": "Заголовок h2 следует раньше заголовка h1" },
+    invalidH3: { "code": "TEXT.INVALID_H3_POSITION", "error": "Заголовок h3 следует раньше заголовка h2" },
+    invalidInputSize: { "code": "FORM.INPUT_AND_LABEL_SIZES_SHOULD_BE_EQUAL", "error": "Подписи и поля в форме должны быть одного размера" },
+    invalidContentSpaceVer: { "code": "FORM.CONTENT_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ контентного элемента должен быть на 2 шага больше эталонного размера" },
+    invalidContentSpaceHor: { "code": "FORM.CONTENT_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ контентного элемента должен быть на 1 шаг больше эталонного размера" },
+    invalidContentItem: { "code": "FORM.CONTENT_ITEM_INDENT_IS_INVALID", "error": "Строки формы помечаются элементом формы content-item и должны отбиваться между собой с помощью модификатора нижнего отступа со значением модификатора indent-b элемента формы item на 1 шаг больше эталонного размера" },
+    invalidHeaderTextSize: { "code": "FORM.HEADER_TEXT_SIZE_IS_INVALID", "error": "Все текстовые блоки в заголовке формы должны быть со значением модификатора size на 2 шага больше эталонного размера" },
+    invalidHeaderSpaceVer: { "code": "FORM.HEADER_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ заголовка формы должен быть задан с помощью микса на него элемента формы item со значением модификатора space-v, равным эталонному размеру" },
+    invalidHeaderSpaceHor: { "code": "FORM.HEADER_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ заголовка формы должен быть на 1 шаг больше эталонного размера" },
+    invalidFooterSpaceVer: { "code": "FORM.FOOTER_VERTICAL_SPACE_IS_INVALID", "error": "Вертикальный внутренний отступ подвала формы должен быть задан с помощью микса на него элемента формы item со значением модификатора space-v, равным эталонному размеру" },
+    invalidFooterSpaceHor: { "code": "FORM.FOOTER_HORIZONTAL_SPACE_IS_INVALID", "error": "Горизонтальный внутренний отступ подвала формы должен быть на 1 шаг больше эталонного размера" },
+    invalidFooterTextSize: { "code": "FORM.FOOTER_TEXT_SIZE_IS_INVALID", "error": "Все текстовые блоки в подвале формы должны быть со значением модификатора size на 2 шага больше эталонного размера" },
+    invalidH1: { "code": "TEXT.SEVERAL_H1", "error": "В документе не может быть больше одного заголовка h1" },
+    invalidH2: { "code": "TEXT.INVALID_H2_POSITION", "error": "Заголовок h2 следует раньше заголовка h1" },
+    invalidH3: { "code": "TEXT.INVALID_H3_POSITION", "error": "Заголовок h3 следует раньше заголовка h2" }
   }
 
   const json = JSON.parse(string);
@@ -1671,46 +51,22 @@ function lint(string) {
   if (!json) throw new Error;
 
   const ast = jsonToAst(json, string);
-  console.log(ast);
   validateHeader(ast);
 
-  let form;
+  const mix = findObjects(ast, "form", true);
 
-/*  const mix = findObjectMixJson(json, "form", false);
+  if (mix) {
 
-  console.log(mix);
+  } else form = findObject(ast, "form", true);
 
+  if (form) validateForm(form);
 
-  if (mix) form = jsonToAst(mix, string);
-  else*/ form = findObject(ast, "form", true);
-
-//  console.log(form);
-      
-//      console.log(jsonToAst(json));
-
-/*
-if(form) {
-  validateInputSizes(form);
-  validateContentSpaces(form);
-  validateContentItem(form);
-  validateHeaderFooterText(form, "header");
-  validateHeaderFooterText(form, "footer");
-  validateHeaderFooterSpaces(form, "header");
-  validateHeaderFooterSpaces(form, "footer");  
-}*/
-
-return errors;
-  
-
-//      console.log(findValue(form, 'size', 'input'));
-
-
-  //  lint(string);
+  return errors;
 
   function validateHeader(obj) {
     const h1 = findObjects(obj, "h1", true),
-    h2 = findObjects(obj, "h2", true),
-    h3 = findObjects(obj, "h3", true);
+      h2 = findObjects(obj, "h2", true),
+      h3 = findObjects(obj, "h3", true);
 
     console.log(h1);
     console.log(h2);
@@ -1718,34 +74,28 @@ return errors;
 
     console.log(h2);
     if (h1 && h1.length > 1) {
-      for(let i = 1; i < h1.length; i++) {
-         pushError(h1[i], errorMessages.invalidH1);
+      for (let i = 1; i < h1.length; i++) {
+        pushError(h1[i], errorMessages.invalidH1);
       }
     }
 
     if (h2 && h1) compareLocation(h2, h1[0], errorMessages.invalidH2);
 
     if (h3 && h2) compareLocation(h3, h2, errorMessages.invalidH3);
-}
+  }
 
   function compareLocation(item1, item2, errorMessage) {
     let result = [];
 
-    if(Array.isArray(item1) && Array.isArray(item2)) {
+    if (Array.isArray(item1) && Array.isArray(item2)) {
       result = item1.filter(item1Child => {
-      item2.forEach(item2Child => compareLoc(item1Child, item2Child))
+        item2.forEach(item2Child => compareLoc(item1Child, item2Child))
       });
-    }
-
-    else if(Array.isArray(item1)) {
+    } else if (Array.isArray(item1)) {
       result = item1.filter(item1Child => compareLoc(item1Child, item2))
-    }
-
-    else if(Array.isArray(item2)) {
+    } else if (Array.isArray(item2)) {
       result = item2.filter(item2Child => compareLoc(item1, item2Child))
-    }
-
-    else result = compareLoc(item1, item2);
+    } else result = compareLoc(item1, item2);
 
     if (result.length) {
       result.forEach(item => pushError(item, errorMessage));
@@ -1753,17 +103,17 @@ return errors;
   }
 
   function compareLoc(item1, item2) {
-      if (item1.locate.start.line !== item2.locate.start.line) return item1.locate.start.line < item2.locate.start.line;
-      else return item1.locate.start.column < item2.locate.start.column;
+    if (item1.locate.start.line !== item2.locate.start.line) return item1.locate.start.line < item2.locate.start.line;
+    else return item1.locate.start.column < item2.locate.start.column;
   }
 
-  function findObjects (item, name, shouldReturnParent, shouldDefineKey = false) {
+  function findObjects(item, name, shouldReturnParent, shouldDefineKey = false) {
     let arr = [],
-    soughtObject = false;
+      soughtObject = false;
 
-    findObj (item, name, shouldReturnParent, shouldDefineKey);
+    findObj(item, name, shouldReturnParent, shouldDefineKey);
 
-    function findObj (item, name, shouldReturnParent, shouldDefineKey) {
+    function findObj(item, name, shouldReturnParent, shouldDefineKey) {
 
       if (item.type === 'Property') {
         if (typeof name === "string") {
@@ -1771,15 +121,13 @@ return errors;
           arr.push(name);
           name = arr;
         }
-        let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));  
+        let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));
 
         if (namesResult.length) {
           soughtObject = item;
           return;
-        }
-
-        else if (item.value.children) {
-          item.value.children.forEach (child => {
+        } else if (item.value.children) {
+          item.value.children.forEach(child => {
             findObj(child, name, shouldReturnParent, shouldDefineKey);
             if (soughtObject) {
               if (shouldReturnParent) soughtObject = item;
@@ -1789,10 +137,8 @@ return errors;
             }
           })
         }
-      }
-
-      else if (item.type === 'Object') {
-        item.children.forEach (child => {
+      } else if (item.type === 'Object') {
+        item.children.forEach(child => {
           findObj(child, name, shouldReturnParent, shouldDefineKey);
           if (soughtObject) {
             if (shouldReturnParent) soughtObject = item;
@@ -1817,7 +163,7 @@ return errors;
     validateHeaderFooterSpaces(form, "footer");
   }
 
-  function validateInputSizes (obj) {
+  function validateInputSizes(obj) {
     const refSize = findSize(obj, ["input", "text", "label"], true);
     const content = findObject(obj, "content", false, true);
     const sizes = [];
@@ -1827,12 +173,10 @@ return errors;
     console.log(errors);
   }
 
-  //  validateInputSizes(form);
-
   function validateContentSpaces(obj) {
     const contentElem = findObject(obj, "content", true);
 
-    if(contentElem) {
+    if (contentElem) {
       const refSize = findSize(obj, "content", true);
       console.log(refSize);
       const mix = findObject(obj, "mix", false);
@@ -1845,26 +189,24 @@ return errors;
       compareSizes(refSize, size, "space-v", errorMessages.invalidContentSpaceVer, validSpacesX2);
       compareSizes(refSize, size, "space-h", errorMessages.invalidContentSpaceHor, validSpacesX1);
       console.log(errors);
-    }    
+    }
   };
-
-  //  validateContentSpaces(form);
 
   function validateContentItem(obj) {
     const contentElem = findObject(obj, "content", true);
 
-    if(contentElem) {
+    if (contentElem) {
       const content = findObject(contentElem.value, "content", false, true);
       let contentItems = [];
 
       content.value.children.forEach(child => {
         let contentItem = findObject(child, "content-item", true);
-        if(!contentItem) pushError(child, errorMessages.invalidContentItem);
+        if (!contentItem) pushError(child, errorMessages.invalidContentItem);
         else contentItems.push(contentItem);
-      })  
+      })
 
       let mixes = [];
-      for(let i = 0; i < contentItems.length - 1; i++) {
+      for (let i = 0; i < contentItems.length - 1; i++) {
         let mix = findObject(contentItems[i], "mix", false, true);
         mixes.push(mix);
       }
@@ -1876,51 +218,43 @@ return errors;
 
       compareSizes(refSize, sizes, "indent-b", errorMessages.invalidContentItem, validSpacesX1);
     }
-    
+
     console.log(errors);
   }
 
-// validateContentItem(form);
+  function validateHeaderFooterText(obj, elem) {
+    const section = findObject(obj, elem, true);
 
-  function validateHeaderFooterText(obj, elem) {    
-    const section = findObject(obj, elem, true);    
-
-    if(section) {
-      const refSize = findSize(obj, ["input", "text", "label"], true);      
-      const content = findObject(section, "content", false, true);    
-      if(content) {
+    if (section) {
+      const refSize = findSize(obj, ["input", "text", "label"], true);
+      const content = findObject(section, "content", false, true);
+      if (content) {
         const sizes = findAllMods(content);
         let errorMessage;
 
         if (elem === 'header') {
           errorMessage = errorMessages.invalidHeaderTextSize;
           compareSizes(refSize, sizes, "size", errorMessage, validSpacesX2);
-        }  
-        else {
+        } else {
           errorMessage = errorMessages.invalidFooterTextSize;
-          compareSizes(refSize, sizes, "size", errorMessage); 
+          compareSizes(refSize, sizes, "size", errorMessage);
         }
-      }      
+      }
     }
-    console.log(errors);    
+    console.log(errors);
   }
 
-  //  validateHeaderFooterText(form, "header");
-  //  validateHeaderFooterText(form, "footer");
-  //  console.log(errors);
+  function validateHeaderFooterSpaces(obj, elem) {
+    const section = findObject(obj, elem, true);
 
-  function validateHeaderFooterSpaces(obj, elem) {    
-    const section = findObject(obj, elem, true);  
-
-    if(section) {
+    if (section) {
       const refSize = findSize(obj, ["input", "text", "label"], true);
 
-      
-      const mix = findObject(section, "mix", false, true);
-     //const mods = findMod(mix, "mods", true, true);
 
-      if(!mix) {
-        (elem === 'header') ? pushError(section, errorMessages.invalidHeaderSpaceVer) : pushError(section, errorMessages.invalidFooterSpaceHor);
+      const mix = findObject(section, "mix", false, true);
+
+      if (!mix) {
+        (elem === 'header') ? pushError(section, errorMessages.invalidHeaderSpaceVer): pushError(section, errorMessages.invalidFooterSpaceHor);
         return;
       }
 
@@ -1929,10 +263,9 @@ return errors;
       console.log(sizes);
 
       if (elem === 'header') {
-        compareSizes(refSize, sizes, "space-v",  errorMessages.invalidHeaderSpaceVer);
+        compareSizes(refSize, sizes, "space-v", errorMessages.invalidHeaderSpaceVer);
         compareSizes(refSize, sizes, "space-h", errorMessages.invalidHeaderSpaceHor, validSpacesX2);
-      }  
-      else {
+      } else {
         compareSizes(refSize, sizes, "space-v", errorMessages.invalidFooterSpaceVer);
         compareSizes(refSize, sizes, "space-h", errorMessages.invalidFooterSpaceHor, validSpacesX2);
       }
@@ -1940,18 +273,13 @@ return errors;
     console.log(errors);
   }
 
-  //validateHeaderFooterSpaces(form, "header");
-  //validateHeaderFooterSpaces(form, "footer");
-  //  console.log(errors);
-  
-
-  function findObject (item, name, shouldReturnParent, shouldDefineKey = false) {
+  function findObject(item, name, shouldReturnParent, shouldDefineKey = false) {
     let result = false,
-    soughtObject = false;
+      soughtObject = false;
 
-    findObj (item, name, shouldReturnParent, shouldDefineKey);
+    findObj(item, name, shouldReturnParent, shouldDefineKey);
 
-    function findObj (item, name, shouldReturnParent, shouldDefineKey) {
+    function findObj(item, name, shouldReturnParent, shouldDefineKey) {
 
       if (!result && item.type === 'Property') {
         if (typeof name === "string") {
@@ -1959,15 +287,13 @@ return errors;
           arr.push(name);
           name = arr;
         }
-        let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));  
+        let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));
 
         if (namesResult.length) {
           soughtObject = item;
           return;
-        }
-
-        else if (!result && item.value.children) {
-          item.value.children.forEach (child => {
+        } else if (!result && item.value.children) {
+          item.value.children.forEach(child => {
             findObj(child, name, shouldReturnParent, shouldDefineKey);
             if (!result && soughtObject) {
               if (shouldReturnParent) soughtObject = item;
@@ -1976,10 +302,8 @@ return errors;
             }
           })
         }
-      }
-
-      else if (!result && item.type === 'Object') {
-        item.children.forEach (child => {
+      } else if (!result && item.type === 'Object') {
+        item.children.forEach(child => {
           findObj(child, name, shouldReturnParent, shouldDefineKey);
           if (!result && soughtObject) {
             if (shouldReturnParent) soughtObject = item;
@@ -1987,11 +311,9 @@ return errors;
             return;
           }
         });
-      }
-
-      else return soughtObject;
+      } else return soughtObject;
     }
-    
+
     return soughtObject;
   }
 
@@ -2004,7 +326,7 @@ return errors;
     const arr = [];
     obj.value.children.forEach(child => {
       const mod = findObject(child, "mods", false, true);
-      if(mod) arr.push(mod);
+      if (mod) arr.push(mod);
     })
 
     return arr;
@@ -2017,11 +339,11 @@ return errors;
   }
 
   function findSize(item, name) {
-    const obj = findObject(item, name, true);    
+    const obj = findObject(item, name, true);
     const mod = findObject(obj, "mods", false, true);
     const size = mod.value.children[0].value.value;
     return size;
-  } 
+  }
 
   function compareSizes(refSize, sizes, name, error, validArr) {
     const errorSizes = [];
@@ -2032,16 +354,16 @@ return errors;
           else return child.value.value !== refSize;
         }
       });
-      if(errorSize.length) errorSizes.push(size);
+      if (errorSize.length) errorSizes.push(size);
     });
 
     if (errorSizes) {
-      const errorsFull = errorSizes.map(item => { 
+      const errorsFull = errorSizes.map(item => {
         let locate = { location: item.locate };
         return {
           ...error,
           ...locate
-          }
+        }
       });
       errors.push(...errorsFull);
     }
@@ -2050,59 +372,9 @@ return errors;
   function pushError(item, error) {
     let locate = { location: item.locate };
     errors.push({
-          ...error,
-          ...locate
-          });
-  }
-
-  function findObjectMixJson (json, name, shouldDefineKey) {
-    let soughtItem = false,
-    mix = false,
-    newObject = false;
-
-    findObjJson(json, name, shouldDefineKey, newObject);
-
-    function findObjJson (obj, name, shouldDefineKey, newObj) {
-
-      for (prop in obj) {
-        if(prop === "mix") mix = true;
-
-        if (Array.isArray(obj[prop])) {
-          obj[prop].forEach(item => {
-            if (newObj) {
-              findObjJson(item, name, shouldDefineKey, newObj.content);
-              newObj.content.push(soughtItem);
-            }
-            else findObjJson(item, name, shouldDefineKey, newObj)
-          });
-        }
-  
-        else if (typeof obj[prop] === 'object') {
-           if (newObj) {
-              findObjJson(obj[prop], name, shouldDefineKey, newObj.content);
-              newObj.content = soughtItem;
-            }
-            else findObjJson(obj[prop], name, shouldDefineKey, newObj)
-        }
-  
-        else if (typeof obj[prop] === 'string') {
-          if ((shouldDefineKey && prop === name) || (obj[prop] === name)) soughtItem = obj;
-        }
-
-        if (!newObj && mix && soughtItem) {
-          newObject = {...soughtItem};
-          soughtItem = false;
-          mix = false;
-          return;
-        }
-      }
-      newObj.content = soughtItem;
-    }
-    return newObject;
-  }
-
-  function createNewObjectFromMix() {
-
+      ...error,
+      ...locate
+    });
   }
 
   function locateValue(raw, numberOfObjects) {
@@ -2112,32 +384,30 @@ return errors;
     };
 
     const bracket = /{/g,
-          backBracket = /}/g;
+      backBracket = /}/g;
 
     for (let i = 0; i < numberOfObjects; i++) {
       bracket.exec(raw);
     }
-    
+
     let objStartIndex = bracket.lastIndex;
     backBracket.lastIndex = bracket.lastIndex;
     findEndIndex();
     let objEndIndex = backBracket.lastIndex;
-    // console.log(objEndIndex);
 
     if (objStartIndex > 1) {
       prevStr = raw.substring(0, objStartIndex - 1);
-      let {column: startColumn, line: startLine} = locateLineColumn (raw, prevStr);
+      let { column: startColumn, line: startLine } = locateLineColumn(raw, prevStr);
       loc.start.line = startLine;
       loc.start.column = startColumn;
-    }
-    else {
+    } else {
       loc.start.line = 1;
       loc.start.column = 1;
     }
 
-    let wholeStr = raw.substring(0, objEndIndex - 1);    
-    let {column: endColumn, line: endLine} = locateLineColumn (raw, wholeStr);
-    
+    let wholeStr = raw.substring(0, objEndIndex - 1);
+    let { column: endColumn, line: endLine } = locateLineColumn(raw, wholeStr);
+
     loc.end.line = endLine;
     loc.end.column = endColumn;
 
@@ -2150,22 +420,19 @@ return errors;
         let length = substr.match(bracket).length;
         let prevIndex = backBracket.lastIndex;
         for (let i = 0; i < length - 1; i++) {
-          backBracket.exec(raw);            
+          backBracket.exec(raw);
         }
         findEndIndex(prevIndex);
         findEndIndex();
-      }
-      else return;
-    }    
+      } else return;
+    }
 
     function locateLineColumn(raw, str) {
       let line = str.match(/\n/g).length + 1;
       let column = str.length - str.lastIndexOf("\n");
-      return {column: column, line: line};
+      return { column: column, line: line };
     }
   }
-
-  // console.log(locateValue(string5, 1));
 
   function jsonToAst(obj, raw) {
     let numberOfObjects = 1;
@@ -2177,12 +444,12 @@ return errors;
     };
 
     createAstTree(obj, ast, raw);
-    
+
     function createAstTree(obj, node, raw) {
 
       for (prop in obj) {
 
-          let child = {
+        let child = {
           type: 'Property',
           key: {
             type: 'Identifier',
@@ -2191,19 +458,19 @@ return errors;
           value: {}
         };
 
-        node.children.push(child); 
+        node.children.push(child);
 
         if (typeof obj[prop] === 'string') {
           child.value.type = 'Literal';
           child.value.value = `${obj[prop]}`;
         }
-  
+
         if (typeof obj[prop] === 'object') {
           child.value.children = [];
 
           if (Array.isArray(obj[prop])) {
             child.value.type = 'Array';
-                       
+
             obj[prop].forEach(item => {
               numberOfObjects++;
               let astObj = {
@@ -2213,20 +480,16 @@ return errors;
               }
               createAstTree(item, astObj, raw);
               child.value.children.push(astObj);
-          }); 
-        }    
-          else {
+            });
+          } else {
             child.value.type = 'Object';
             numberOfObjects++;
             child.locate = locateValue(raw, numberOfObjects);
             createAstTree(obj[prop], child.value, raw);
-          } 
-        }  
+          }
+        }
       }
     }
-
- //   console.log("number: " + numberOfObjects);
     return ast;
   }
 }
-

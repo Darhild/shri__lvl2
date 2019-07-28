@@ -1610,7 +1610,25 @@ const string8 = `{ "block": "payment",
 ]
 }`
 
-console.log(lint(string4));
+
+const string9 = `{
+  "block": "form",
+  "content": 
+      [{
+        "block": "text",
+        "mods": { "type": "h2" }
+       },
+       {
+         "block": "mock",
+         "content": {
+         "block": "text",
+         "mods": { "type": "h1" }
+       }
+      }
+   ]
+}`
+
+console.log(lint(string1));
 
 window.lint = lint;
 
@@ -1674,30 +1692,21 @@ function lint(string) {
   console.log(ast);
   validateHeader(ast);
 
-  let form;
-
-/*  const mix = findObjectMixJson(json, "form", false);
-
-  console.log(mix);
 
 
-  if (mix) form = jsonToAst(mix, string);
-  else*/ form = findObject(ast, "form", true);
+const mix = findObjects(ast, "form", true);
+
+  if (mix) {
+     console.log(mix);
+  }
+  else form = findObject(ast, "form", true);
 
 //  console.log(form);
       
 //      console.log(jsonToAst(json));
 
-/*
-if(form) {
-  validateInputSizes(form);
-  validateContentSpaces(form);
-  validateContentItem(form);
-  validateHeaderFooterText(form, "header");
-  validateHeaderFooterText(form, "footer");
-  validateHeaderFooterSpaces(form, "header");
-  validateHeaderFooterSpaces(form, "footer");  
-}*/
+
+if(form) validateForm(form);
 
 return errors;
   
@@ -1806,6 +1815,55 @@ return errors;
     }
     return arr;
   }
+/*
+  function findMixObject (item, name, shouldReturnParent, shouldDefineKey = false) {
+    let soughtObject = false,
+    newObject = {...item};
+
+    findObj (item, name);
+
+    function findObj (item, name, newObj = {}) {
+
+      if (item.type === 'Property') {
+        if (typeof name === "string") {
+          let arr = [];
+          arr.push(name);
+          name = arr;
+        }
+        let namesResult = name.filter(str => findProperty(item, str);
+
+        if (namesResult.length) {
+          soughtObject = item;
+          return;
+        }
+
+        else if (item.value.children) {
+          item.value.children.forEach (child => {
+            findObj(child, name);
+            if (soughtObject) {
+              soughtObject = item;
+              newObject[content].push(soughtObject);              
+              return;
+            }
+          })
+        }
+      }
+
+      else if (item.type === 'Object') {
+        item.children.forEach (child => {
+          findObj(child, name);
+          if (soughtObject) {
+            soughtObject = item;
+            newObject = {...soughtObject};
+            soughtObject = false;
+            return;
+          }
+        });
+      }
+
+    }
+    return arr;
+  }*/
 
   function validateForm(form) {
     validateInputSizes(form);
@@ -2054,7 +2112,7 @@ return errors;
           ...locate
           });
   }
-
+/*
   function findObjectMixJson (json, name, shouldDefineKey) {
     let soughtItem = false,
     mix = false,
@@ -2062,7 +2120,7 @@ return errors;
 
     findObjJson(json, name, shouldDefineKey, newObject);
 
-    function findObjJson (obj, name, shouldDefineKey, newObj) {
+    function findObjJson (obj, name, shouldDefineKey, newObj = {}) {
 
       for (prop in obj) {
         if(prop === "mix") mix = true;
@@ -2071,7 +2129,7 @@ return errors;
           obj[prop].forEach(item => {
             if (newObj) {
               findObjJson(item, name, shouldDefineKey, newObj.content);
-              newObj.content.push(soughtItem);
+              newObj[prop].push(soughtItem);
             }
             else findObjJson(item, name, shouldDefineKey, newObj)
           });
@@ -2080,7 +2138,7 @@ return errors;
         else if (typeof obj[prop] === 'object') {
            if (newObj) {
               findObjJson(obj[prop], name, shouldDefineKey, newObj.content);
-              newObj.content = soughtItem;
+              newObj[prop] = soughtItem;
             }
             else findObjJson(obj[prop], name, shouldDefineKey, newObj)
         }
@@ -2103,7 +2161,7 @@ return errors;
 
   function createNewObjectFromMix() {
 
-  }
+  }*/
 
   function locateValue(raw, numberOfObjects) {
     let loc = {
