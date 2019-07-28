@@ -51,6 +51,8 @@ function lint(string) {
   if (!json) throw new Error;
 
   const ast = jsonToAst(json, string);
+  let form;
+
   validateHeader(ast);
 
   const mix = findObjects(ast, "form", true);
@@ -68,11 +70,6 @@ function lint(string) {
       h2 = findObjects(obj, "h2", true),
       h3 = findObjects(obj, "h3", true);
 
-    console.log(h1);
-    console.log(h2);
-    console.log(h3);
-
-    console.log(h2);
     if (h1 && h1.length > 1) {
       for (let i = 1; i < h1.length; i++) {
         pushError(h1[i], errorMessages.invalidH1);
