@@ -56,7 +56,7 @@ const string1 = `{
                       "content":
                         { "block": "text",
                           "mix": [
-                            {"block": "text", "mods": {"view": "primary", "size": "xxl"}}
+                            {"block": "text", "mods": {"view": "primary", "type": "h1"}}
                           ],
                            "content":
                             { "block": "text",
@@ -81,7 +81,7 @@ const string1 = `{
                               "elem": "label",
                               "mix": [
                                 {"block": "form", "elem": "label", "mods": {"width": "default"}},
-                                {"block": "text", "mods": {"view": "primary", "size": "l"}}
+                                {"block": "text", "mods": {"view": "primary", "type": "h2"}}
                               ],
                               "content": [
                                 { "block": "text", "elem": "word", "elemMods": {"width": "l"}
@@ -1499,7 +1499,115 @@ const string7 = `{
   ]
 }`
 
-//console.log(lint(string1));
+const string8 = `{ "block": "payment",
+"mix": [
+  {"block": "form", "mods": {"border": "all"}},
+  {"block": "grid", "elem": "fraction", "elemMods": {"m-col": "5"}}
+],
+"content": [
+  { "block": "payment",
+    "elem": "header",
+    "mix": [
+      {"block": "form", "elem": "item", "elemMods": {"space-v": "l", "space-h": "xl", "border": "bottom"}}
+    ],
+    "content":
+      { "block": "text",
+        "mix": [
+          {"block": "text", "mods": {"view": "primary", "size": "xxl"}}
+        ],
+         "content":
+          { "block": "text",
+            "elem": "word",
+            "elemMods": {"width": "l"}
+          }
+      }
+  },
+  { "block": "payment",
+    "elem": "content",
+    "mix": [
+      {"block": "form", "elem": "item", "elemMods": {"space-v": "xxxl", "space-h": "xl", "border": "bottom"}}
+    ],
+    "content": [
+      { "block": "payment",
+        "elem": "item",
+        "mix": [
+          {"block": "form", "elem": "item", "elemMods": {"indent-b": "xl", "distribute": "between", "vertical-align": "center"}}
+        ],
+        "content": [
+          { "block": "payment",
+            "elem": "label",
+            "mix": [
+              {"block": "form", "elem": "label", "mods": {"width": "default"}},
+              {"block": "text", "mods": {"view": "primary", "size": "l"}}
+            ],
+            "content": [
+              { "block": "text", "elem": "word", "elemMods": {"width": "l"}
+              }
+            ]
+          },
+          { "block": "payment",
+            "elem": "control",
+            "mix": [
+              {"block": "form", "elem": "control"}
+            ],
+            "content":
+              {"block": "input", "mods": {"size": "l"}}
+          }
+        ]
+      },
+      { "block": "payment",
+        "elem": "item",
+        "mix": [
+          {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "vertical-align": "center"}}
+        ],
+        "content": [
+          { "block": "payment",
+            "elem": "label",
+            "mix": [
+              {"block": "form", "elem": "label", "mods": {"width": "default"}},
+              {"block": "text", "mods": {"view": "primary", "size": "l"}}
+            ],
+            "content": [
+              { "block": "text", "elem": "word", "elemMods": {"width": "l"}
+              }
+            ]
+          },
+          { "block": "payment",
+            "elem": "control",
+            "mix": [
+              {"block": "form", "elem": "control"}
+            ],
+            "content":
+              {"block": "input", "mods": {"size": "l"}}
+          }
+        ]
+      }
+    ]
+  },
+  { "block": "payment",
+    "elem": "footer",
+    "mix": [
+      {"block": "form", "elem": "item", "elemMods": {"distribute": "between", "border": "bottom", "vertical-align": "center", "space-v": "l", "space-h": "xl"}}
+    ],
+    "content": [
+      { "block": "text",
+        "mix": [
+          {"block": "text", "mods": {"view": "primary", "type": "h3", "size": "l"}}
+        ],
+        "content":
+          { "block": "text",
+            "elem": "word",
+            "elemMods": {"width": "l"}
+          }
+      },
+      { "block": "button",
+        "mods": {"size": "l"}}
+    ]
+  }
+]
+}`
+
+console.log(lint(string1));
 
 window.lint = lint;
 
@@ -1556,11 +1664,27 @@ function lint(string) {
   }
 
   const json = JSON.parse(string);
+
+  if (!json) throw new Error;
+
   const ast = jsonToAst(json, string);
-  const form = findObject(ast, "form", true);
-  console.log(form);
+  console.log(ast);
+  validateHeader(ast);
+
+  let form;
+
+/*  const mix = findObjectMixJson(json, "form", false);
+
+  console.log(mix);
+
+
+  if (mix) form = jsonToAst(mix, string);
+  else*/ form = findObject(ast, "form", true);
+
+//  console.log(form);
       
 //      console.log(jsonToAst(json));
+
 
 if(form) {
   validateInputSizes(form);
@@ -1579,6 +1703,119 @@ return errors;
 
 
   //  lint(string);
+
+  function validateHeader(obj) {
+    const h1 = findObjects(obj, "h1", true),
+    h2 = findObjects(obj, "h2", true),
+    h3 = findObjects(obj, "h3", true);
+
+    console.log(h1);
+    console.log(h2);
+    console.log(h3);
+
+    console.log(h2);
+    if (h1 && h1.length > 1) {
+      for(let i = 1; i < h1.length; i++) {
+         pushError(h1[i], errorMessages.invalidH1);
+      }
+    }
+
+    if (h2) compareLocation(h2, h1[0], errorMessages.invalidH2);
+
+    if (h3) {
+      compareLocation(h3, h2, errorMessages.invalidH3);
+      compareLocation(h3, h1[0], errorMessages.invalidH3);
+    }
+  }
+
+  function compareLocation(item1, item2, errorMessage) {
+    let result = [];
+
+    if(Array.isArray(item1) && Array.isArray(item2)) {
+      result = item1.filter(item1Child => {
+      item2.forEach(item2Child => compareLoc(item1Child, item2Child))
+      });
+    }
+
+    else if(Array.isArray(item1)) {
+      result = item1.filter(item1Child => compareLoc(item1Child, item2))
+    }
+
+    else if(Array.isArray(item2)) {
+      result = item2.filter(item2Child => compareLoc(item1, item2Child))
+    }
+
+    else result = compareLoc(item1, item2);
+
+    if (result.length) {
+      result.forEach(item => pushError(item, errorMessage));
+    }
+  }
+
+  function compareLoc(item1, item2) {
+      if (item1.locate.start.line !== item2.locate.start.line) return item1.locate.start.line > item2.locate.start.line;
+      else return item1.locate.start.column > item2.locate.start.column;
+  }
+
+  function findObjects (item, name, shouldReturnParent, shouldDefineKey = false) {
+    let arr = [],
+    soughtObject = false;
+
+    findObj (item, name, shouldReturnParent, shouldDefineKey);
+
+    function findObj (item, name, shouldReturnParent, shouldDefineKey) {
+
+      if (item.type === 'Property') {
+        if (typeof name === "string") {
+          let arr = [];
+          arr.push(name);
+          name = arr;
+        }
+        let namesResult = name.filter(str => findProperty(item, str, shouldDefineKey));  
+
+        if (namesResult.length) {
+          soughtObject = item;
+          return;
+        }
+
+        else if (item.value.children) {
+          item.value.children.forEach (child => {
+            findObj(child, name, shouldReturnParent, shouldDefineKey);
+            if (soughtObject) {
+              if (shouldReturnParent) soughtObject = item;
+              arr.push(soughtObject);
+              soughtObject = false;
+              return;
+            }
+          })
+        }
+      }
+
+      else if (item.type === 'Object') {
+        item.children.forEach (child => {
+          findObj(child, name, shouldReturnParent, shouldDefineKey);
+          if (soughtObject) {
+            if (shouldReturnParent) soughtObject = item;
+            arr.push(soughtObject);
+            soughtObject = false;
+            return;
+          }
+        });
+      }
+
+    }
+    return arr;
+  }
+
+  function validateForm(form) {
+    validateInputSizes(form);
+    validateContentSpaces(form);
+    validateContentItem(form);
+    validateHeaderFooterText(form, "header");
+    validateHeaderFooterText(form, "footer");
+    validateHeaderFooterSpaces(form, "header");
+    validateHeaderFooterSpaces(form, "footer");
+  }
 
   function validateInputSizes (obj) {
     const refSize = findSize(obj, ["input", "text", "label"], true);
@@ -1767,7 +2004,7 @@ return errors;
     const arr = [];
     obj.value.children.forEach(child => {
       const mod = findObject(child, "mods", false, true);
-      if(mod) arr.push(mod);      
+      if(mod) arr.push(mod);
     })
 
     return arr;
@@ -1816,6 +2053,56 @@ return errors;
           ...error,
           ...locate
           });
+  }
+
+  function findObjectMixJson (json, name, shouldDefineKey) {
+    let soughtItem = false,
+    mix = false,
+    newObject = false;
+
+    findObjJson(json, name, shouldDefineKey, newObject);
+
+    function findObjJson (obj, name, shouldDefineKey, newObj) {
+
+      for (prop in obj) {
+        if(prop === "mix") mix = true;
+
+        if (Array.isArray(obj[prop])) {
+          obj[prop].forEach(item => {
+            if (newObj) {
+              findObjJson(item, name, shouldDefineKey, newObj.content);
+              newObj.content.push(soughtItem);
+            }
+            else findObjJson(item, name, shouldDefineKey, newObj)
+          });
+        }
+  
+        else if (typeof obj[prop] === 'object') {
+           if (newObj) {
+              findObjJson(obj[prop], name, shouldDefineKey, newObj.content);
+              newObj.content = soughtItem;
+            }
+            else findObjJson(obj[prop], name, shouldDefineKey, newObj)
+        }
+  
+        else if (typeof obj[prop] === 'string') {
+          if ((shouldDefineKey && prop === name) || (obj[prop] === name)) soughtItem = obj;
+        }
+
+        if (!newObj && mix && soughtItem) {
+          newObject = {...soughtItem};
+          soughtItem = false;
+          mix = false;
+          return;
+        }
+      }
+      newObj.content = soughtItem;
+    }
+    return newObject;
+  }
+
+  function createNewObjectFromMix() {
+
   }
 
   function locateValue(raw, numberOfObjects) {
