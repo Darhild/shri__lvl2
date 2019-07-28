@@ -51,15 +51,10 @@ function lint(string) {
   if (!json) throw new Error;
 
   const ast = jsonToAst(json, string);
-  let form;
 
   validateHeader(ast);
 
-  const mix = findObjects(ast, "form", true);
-
-  if (mix) {
-
-  } else form = findObject(ast, "form", true);
+  const form = findObject(ast, "form", true);
 
   if (form) validateForm(form);
 
